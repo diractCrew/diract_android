@@ -35,6 +35,12 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    //뷰바인딩
+    buildFeatures {
+        viewBinding = true
+
+    }
 }
 
 dependencies {
@@ -46,4 +52,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    //네비게이션 의존성
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.ui)
 }
