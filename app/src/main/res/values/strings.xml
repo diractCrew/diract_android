@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Diract</string>
+
+    <!-- 바텀 네비게이션 바-->
+    <string name="home">홈</string>
+    <string name="inbox">수신함</string>
+    <string name="my_page">마이 페이지</string>
 </resources>
