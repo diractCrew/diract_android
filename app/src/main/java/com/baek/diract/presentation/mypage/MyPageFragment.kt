@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.baek.diract.R
 import com.baek.diract.databinding.FragmentMyPageBinding
 
 class MyPageFragment : Fragment() {
