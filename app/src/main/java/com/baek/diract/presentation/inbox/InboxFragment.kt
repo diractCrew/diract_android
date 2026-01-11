@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.baek.diract.databinding.FragmentInboxBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class InboxFragment : Fragment() {
     private var _binding: FragmentInboxBinding? = null
     private val binding get() = _binding!!
