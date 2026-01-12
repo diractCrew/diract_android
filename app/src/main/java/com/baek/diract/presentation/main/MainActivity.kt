@@ -39,12 +39,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //상태바, 네비게이션바 아이콘 밝게(배경은 어둡게)
-        WindowInsetsControllerCompat(window, window.decorView).apply {
-            isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = false
-        }
-
         //인셋 리스너 설정
         ViewCompat.setOnApplyWindowInsetsListener(binding.navHostFragment) { v, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
