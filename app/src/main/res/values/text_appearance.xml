@@ -63,6 +63,7 @@
         <item name="android:fontFamily">@font/pretendard_medium</item>
     </style>
 
+    <!-- //////////base////////// -->
     <style name="TextAppearance.App.Title1" parent="TextAppearance.App.Title1.Semibold" />
 
     <style name="TextAppearance.App.Title2" parent="TextAppearance.App.Title2.Semibold" />
