@@ -42,7 +42,7 @@
     <style name="TextAppearance.App.Body1.Medium">
         <item name="android:textSize">16sp</item>
         <!-- 16sp * 1.6 = 25.6sp -->
-        <item name="android:lineHeight">26sp</item>
+        <!--<item name="android:lineHeight">26sp</item>-->
         <item name="android:fontFamily">@font/pretendard_medium</item>
     </style>
 

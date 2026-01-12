@@ -3,16 +3,16 @@
 
     <item
         android:id="@+id/homeFragment"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/ic_home"
         android:title="@string/home" />
 
     <item
         android:id="@+id/inboxFragment"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/ic_inbox"
         android:title="@string/inbox" />
 
     <item
         android:id="@+id/myPageFragment"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/ic_person"
         android:title="@string/my_page" />
 </menu>

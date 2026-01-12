@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--바텀 네비게이션 바 스타일-->
+    <style name="Widget.Diract.BottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="itemIconTint">@color/bottom_nav_selector</item>
+        <item name="itemTextColor">@color/bottom_nav_selector</item>
+        <item name="android:background">@color/fill_subtle</item>
+        <item name="itemRippleColor">@null</item>
+        <item name="elevation">0dp</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.Diract.BottomNav.ActiveIndicator</item>
+    </style>
+
+    <!-- 바텀네비게이션바 activeIndicator -->
+    <style name="Widget.Diract.BottomNav.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/fill_strong</item>
+        <item name="shapeAppearance">@style/Shape.Diract.BottomNav.Indicator</item>
+    </style>
+
+    <style name="Shape.Diract.BottomNav.Indicator" parent="ShapeAppearance.Material3.Corner.Full">
+        <item name="cornerSize">16dp</item>
+    </style>
+</resources>
