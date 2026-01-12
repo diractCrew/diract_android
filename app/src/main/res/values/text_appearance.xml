@@ -39,7 +39,7 @@
     </style>
 
     <!-- Body -->
-    <style name="TextAppearance.App.Body1.Medium" parent="TextAppearance.Material3.BodyMedium">
+    <style name="TextAppearance.App.Body1.Medium">
         <item name="android:textSize">16sp</item>
         <!-- 16sp * 1.6 = 25.6sp -->
         <item name="android:lineHeight">26sp</item>
@@ -62,5 +62,21 @@
         <item name="android:textSize">12sp</item>
         <item name="android:fontFamily">@font/pretendard_medium</item>
     </style>
+
+    <style name="TextAppearance.App.Title1" parent="TextAppearance.App.Title1.Semibold" />
+
+    <style name="TextAppearance.App.Title2" parent="TextAppearance.App.Title2.Semibold" />
+
+    <style name="TextAppearance.App.Heading1" parent="TextAppearance.App.Heading1.Semibold" />
+
+    <style name="TextAppearance.App.Headline1" parent="TextAppearance.App.Headline1.Medium" />
+
+    <style name="TextAppearance.App.Headline2" parent="TextAppearance.App.Headline2.Medium" />
+
+    <style name="TextAppearance.App.Body1" parent="TextAppearance.App.Body1.Medium" />
+
+    <style name="TextAppearance.App.Footnote" parent="TextAppearance.App.Footnote.Medium" />
+
+    <style name="TextAppearance.App.Caption1" parent="TextAppearance.App.Caption1.Medium" />
 
 </resources>
