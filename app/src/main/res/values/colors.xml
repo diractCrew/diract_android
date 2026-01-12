@@ -2,4 +2,47 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Background -->
+    <color name="background_normal">#202127</color>
+    <color name="background_elevated">#272930</color>
+
+    <!-- Label -->
+    <color name="label_strong">#EDEEF1</color>
+    <color name="label_normal">#989EAD</color>
+    <color name="label_assistive">#6D758A</color>
+
+    <!-- Fill -->
+    <color name="fill_strong">#202127</color>
+    <color name="fill_normal">#272930</color>
+    <color name="fill_assistive">#3D414D</color>
+    <color name="fill_alternative">#1AF3E4FF</color>
+    <color name="fill_subtle">#2A2D36</color>
+
+    <!-- Primitive -->
+    <color name="primitive_heavy">#4023D4</color>
+    <color name="primitive_strong">#5864C2</color>
+    <color name="primitive_normal">#7680CD</color>
+    <color name="primitive_assistive">#9DA4DB</color>
+
+    <!-- Secondary -->
+    <color name="secondary_strong">#615BFD</color>
+    <color name="secondary_normal">#7E7CFF</color>
+    <color name="secondary_assistive">#9DA4DB</color>
+    <!--
+    <color name="secondary_alternative_glass">#FFFFFF</color>
+    -->
+    <!-- Accent -->
+    <color name="accent_blue_strong">#007AFF</color>
+    <color name="accent_blue_normal">#56BDFF</color>
+    <color name="accent_red_strong">#EC3C3C</color>
+    <color name="accent_red_normal">#FF5C5C</color>
+
+    <!-- Material -->
+    <color name="material_dimmer">#66000000</color>
+
+    <!-- Stroke -->
+    <color name="stroke_strong">#3D414D</color>
+    <color name="stroke_normal">#272930</color>
+
 </resources>
