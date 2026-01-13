@@ -1,83 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Title -->
-    <style name="TextAppearance.App.Title1.Semibold">
+
+    <!-- ///// base ///// -->
+    <style name="Title1" parent="TextAppearance.Material3.DisplaySmall">
         <item name="android:textSize">32sp</item>
+        <item name="android:textColor">@color/label_strong</item>
+    </style>
+
+    <style name="Title2" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/label_strong</item>
+    </style>
+
+    <style name="Heading1" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/label_strong</item>
+    </style>
+
+    <style name="Headline1" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/label_strong</item>
+    </style>
+
+    <style name="Headline2" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/label_strong</item>
+    </style>
+
+    <style name="Body1" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/label_strong</item>
+        <!-- <item name="android:lineHeight">26sp</item> -->
+    </style>
+
+    <style name="Footnote" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/label_strong</item>
+    </style>
+
+    <style name="Caption1" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/label_strong</item>
+    </style>
+
+
+    <!-- ///// textAppearance ///// -->
+    <!-- Title -->
+    <style name="Title1.Semibold">
         <item name="android:fontFamily">@font/pretendard_semibold</item>
     </style>
 
-    <style name="TextAppearance.App.Title2.Semibold">
-        <item name="android:textSize">24sp</item>
+    <style name="Title2.Semibold">
         <item name="android:fontFamily">@font/pretendard_semibold</item>
     </style>
 
     <!-- Heading -->
-    <style name="TextAppearance.App.Heading1.Semibold">
-        <item name="android:textSize">18sp</item>
+    <style name="Heading1.Semibold">
         <item name="android:fontFamily">@font/pretendard_semibold</item>
     </style>
 
-    <style name="TextAppearance.App.Heading1.Medium">
-        <item name="android:textSize">18sp</item>
+    <style name="Heading1.Medium">
         <item name="android:fontFamily">@font/pretendard_medium</item>
     </style>
 
     <!-- Headline -->
-    <style name="TextAppearance.App.Headline1.Medium">
-        <item name="android:textSize">17sp</item>
+    <style name="Headline1.Medium">
         <item name="android:fontFamily">@font/pretendard_medium</item>
     </style>
 
-    <style name="TextAppearance.App.Headline2.Semibold">
-        <item name="android:textSize">16sp</item>
+    <style name="Headline2.Semibold">
         <item name="android:fontFamily">@font/pretendard_semibold</item>
     </style>
 
-    <style name="TextAppearance.App.Headline2.Medium">
-        <item name="android:textSize">16sp</item>
+    <style name="Headline2.Medium">
         <item name="android:fontFamily">@font/pretendard_medium</item>
     </style>
 
     <!-- Body -->
-    <style name="TextAppearance.App.Body1.Medium">
-        <item name="android:textSize">16sp</item>
-        <!-- 16sp * 1.6 = 25.6sp -->
-        <!--<item name="android:lineHeight">26sp</item>-->
+    <style name="Body1.Medium">
         <item name="android:fontFamily">@font/pretendard_medium</item>
     </style>
 
     <!-- Footnote -->
-    <style name="TextAppearance.App.Footnote.Medium">
-        <item name="android:textSize">14sp</item>
+    <style name="Footnote.Medium">
         <item name="android:fontFamily">@font/pretendard_medium</item>
     </style>
 
-    <style name="TextAppearance.App.Footnote.Semibold">
-        <item name="android:textSize">14sp</item>
+    <style name="Footnote.Semibold">
         <item name="android:fontFamily">@font/pretendard_semibold</item>
     </style>
 
     <!-- Caption -->
-    <style name="TextAppearance.App.Caption1.Medium">
-        <item name="android:textSize">12sp</item>
+    <style name="Caption1.Medium">
         <item name="android:fontFamily">@font/pretendard_medium</item>
     </style>
-
-    <!-- //////////base////////// -->
-    <style name="TextAppearance.App.Title1" parent="TextAppearance.App.Title1.Semibold" />
-
-    <style name="TextAppearance.App.Title2" parent="TextAppearance.App.Title2.Semibold" />
-
-    <style name="TextAppearance.App.Heading1" parent="TextAppearance.App.Heading1.Semibold" />
-
-    <style name="TextAppearance.App.Headline1" parent="TextAppearance.App.Headline1.Medium" />
-
-    <style name="TextAppearance.App.Headline2" parent="TextAppearance.App.Headline2.Medium" />
-
-    <style name="TextAppearance.App.Body1" parent="TextAppearance.App.Body1.Medium" />
-
-    <style name="TextAppearance.App.Footnote" parent="TextAppearance.App.Footnote.Medium" />
-
-    <style name="TextAppearance.App.Caption1" parent="TextAppearance.App.Caption1.Medium" />
-
 </resources>
