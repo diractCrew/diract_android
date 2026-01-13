@@ -22,8 +22,8 @@
     </style>
 
 
-    <!-- 파트 선택 칩 -->
-    <style name="Widget.Diract.PartChip" parent="Widget.Material3.Chip.Filter.Elevated">
+    <!-- 섹션 선택 칩 -->
+    <style name="Widget.Diract.SectionChip" parent="Widget.Material3.Chip.Filter.Elevated">
         <item name="chipStartPadding">10dp</item>
         <item name="chipEndPadding">10dp</item>
         <item name="android:insetBottom">5dp</item>
@@ -50,8 +50,8 @@
         <item name="android:textColor">@color/label_strong</item>
     </style>
 
-    <!-- 파트 추가 칩 -->
-    <style name="Widget.Diract.PartSetChip" parent="Widget.Material3.Chip.Assist.Elevated">
+    <!-- 섹션 추가 칩 -->
+    <style name="Widget.Diract.AddSectionChip" parent="Widget.Material3.Chip.Assist.Elevated">
         <item name="chipStartPadding">10dp</item>
         <item name="chipEndPadding">10dp</item>
         <item name="android:insetBottom">5dp</item>

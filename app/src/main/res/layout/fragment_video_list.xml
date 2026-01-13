@@ -34,7 +34,7 @@
 
         <!-- 파트 선택 리스트 -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvParts"
+            android:id="@+id/rvSections"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
