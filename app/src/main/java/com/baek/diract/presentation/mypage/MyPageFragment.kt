@@ -27,8 +27,16 @@ class MyPageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //TODO: 기능 구현
+        navigationTemporaryEx()
     }
 
+    /*
+        TODO: HomeFragment에서 navigation 설정 필요
+        1. nav_graph에서 수정
+        2. home fragment에서
+            val action = HomeFragmentDirections.actionHomeFragmentToVideoListFragment(tracksId)
+            findNavController().navigate(action)
+     */
     fun navigationTemporaryEx() {
         val tracksId = "abc"
         binding.toVideoBtn.setOnClickListener {
