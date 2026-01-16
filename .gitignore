@@ -35,3 +35,4 @@ app/google-services.json
 
 # Local AI tool config
 .claude/
+CLAUDE.md
