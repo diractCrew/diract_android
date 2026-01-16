@@ -1,16 +1,41 @@
 package com.baek.diract.presentation.home.video
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.baek.diract.R
 import com.baek.diract.databinding.FragmentVideoListBinding
+import com.baek.diract.domain.model.VideoSummary
+import com.baek.diract.presentation.common.UiState
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class VideoListFragment : Fragment() {
     private var _binding: FragmentVideoListBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: VideoListViewModel by viewModels()
+
+    private val args: VideoListFragmentArgs by navArgs()
+
+    private lateinit var videoCardAdapter: VideoCardAdapter
+    private lateinit var sectionChipAdapter: SectionChipAdapter
+
+    private var statusBarHeight = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -18,6 +43,153 @@ class VideoListFragment : Fragment() {
     ): View {
         _binding = FragmentVideoListBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initView()
+        initAdapter()
+        observeViewModel()
+    }
+
+    private fun initView() {
+        binding.topBar.title = viewModel.trackTitle ?: ""
+        binding.topBar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        binding.swipeRefreshLayoutList.setOnRefreshListener {
+            viewModel.refresh()
+        }
+
+        applyStatusBarInsetsToToolbar()
+    }
+
+    private fun applyStatusBarInsetsToToolbar() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.topBar) { v, insets ->
+            val top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            statusBarHeight = top
+            val baseHeight = resources.getDimensionPixelSize(R.dimen.toolbar_height_64) // 64dp
+
+            // 툴바 높이를 status bar 만큼 늘려서 "내용이 눌리지" 않게
+            v.updateLayoutParams<ViewGroup.LayoutParams> {
+                height = baseHeight + top
+            }
+
+            // 실제 아이콘/타이틀이 status bar 아래로 내려오게
+            v.updatePadding(top = top)
+
+            insets
+        }
+    }
+
+    private fun initAdapter() {
+        sectionChipAdapter = SectionChipAdapter(
+            onAddSectionClick = ::onAddSectionClick,
+            onSectionClick = ::onSectionClick
+        )
+        //아이템 간격 설정
+        binding.rvSections.apply {
+            adapter = sectionChipAdapter
+            addItemDecoration(SectionChipItemDecoration(resources.getDimensionPixelSize(R.dimen.section_chip_spacing)))
+        }
+
+        videoCardAdapter = VideoCardAdapter(
+            onItemClick = ::onVideoItemClick,
+            onMoreClick = ::onVideoMoreClick,
+            onCancelClick = ::onVideoCancelClick
+        )
+        //아이템 간격 설정
+        binding.rvVideoList.apply {
+            adapter = videoCardAdapter
+            addItemDecoration(
+                VideoCardItemDecoration(
+                    spanCount = 2,
+                    horizontalSpacing = resources.getDimensionPixelSize(R.dimen.video_card_spacing),
+                    verticalSpacing = resources.getDimensionPixelSize(R.dimen.video_card_spacing)
+                )
+            )
+        }
+    }
+
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.videoItems.collect { state ->
+                        binding.swipeRefreshLayoutList.isRefreshing = state is UiState.Loading
+
+                        when (state) {
+                            is UiState.Success -> {
+                                updateVideoList(state.data)
+                                updateViewVisibility(false, state.data.isEmpty())
+                            }
+
+                            is UiState.Error -> {
+                                updateViewVisibility(true)
+                            }
+
+                            else -> Unit
+                        }
+                    }
+                }
+                launch {
+                    viewModel.sectionChipItems.collect { items ->
+                        sectionChipAdapter.submitList(items)
+                        // 섹션 칩이 로드된 후 viewSpacer 높이 설정 (AppBarLayout + 상태바)
+                        binding.rvSections.post {
+                            binding.viewSpacer.updateLayoutParams<ViewGroup.LayoutParams> {
+                                height = binding.appBarLayout.height + statusBarHeight
+                            }
+                        }
+                    }
+                }
+                launch {
+                    viewModel.isRefreshing.collect { isRefreshing ->
+                        binding.swipeRefreshLayoutList.isRefreshing = isRefreshing
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateVideoList(items: List<VideoCardItem>) {
+        videoCardAdapter.submitList(items)
+    }
+
+    private fun updateViewVisibility(isErr: Boolean, isEmpty: Boolean = true) {
+        binding.errorView.visibility = if (isErr) View.VISIBLE else View.GONE
+        if(isErr) return
+        binding.rvVideoList.visibility = if (isEmpty) View.GONE else View.VISIBLE
+        binding.emptyView.visibility = if (isEmpty) View.VISIBLE else View.GONE
+    }
+
+    // 비디오 아이템 클릭 (완료된 비디오만 클릭 가능)
+    private fun onVideoItemClick(video: VideoSummary) {
+        Toast.makeText(requireContext(), "영상 선택: ${video.title}", Toast.LENGTH_SHORT).show()
+        // TODO: 비디오 상세 화면으로 이동
+    }
+
+    // 더보기 버튼 클릭
+    private fun onVideoMoreClick(video: VideoSummary) {
+        Toast.makeText(requireContext(), "더보기: ${video.title}", Toast.LENGTH_SHORT).show()
+        // TODO: 더보기 메뉴 표시 (편집, 삭제 등)
+    }
+
+    // 실패 아이템 취소 버튼 클릭
+    private fun onVideoCancelClick(item: VideoCardItem.Failed) {
+        viewModel.cancelFailedItem(item)
+    }
+
+    // 섹션 추가 버튼 클릭
+    private fun onAddSectionClick() {
+        Toast.makeText(requireContext(), "섹션 추가", Toast.LENGTH_SHORT).show()
+        // TODO: 섹션 추가 다이얼로그 표시
+    }
+
+    // 섹션 칩 클릭
+    private fun onSectionClick(section: SectionChipItem.SectionUi) {
+        viewModel.selectSection(section.id)
     }
 
     override fun onDestroyView() {

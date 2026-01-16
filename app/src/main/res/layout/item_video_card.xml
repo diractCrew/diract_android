@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="@color/fill_normal"
@@ -13,39 +14,125 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <!-- 썸네일 영역 -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="104dp">
 
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:scaleType="centerCrop"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_gravity="bottom"
+                android:background="#202127" />
 
+            <!-- 기본: 썸네일 이미지 -->
+            <ImageView
+                android:id="@+id/thumbnailImg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="Thumbnail"
+                android:scaleType="centerCrop" />
+
+            <!-- 기본: 더보기 버튼 -->
             <ImageButton
                 android:id="@+id/btnMore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="end"
                 android:background="@android:color/transparent"
+                android:contentDescription="More"
                 android:paddingTop="8dp"
                 android:src="@drawable/ic_more_vert"
-                android:tint="@android:color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:tint="@android:color/white" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <!-- 압축 오버레이 -->
+            <FrameLayout
+                android:id="@+id/stateOverlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
 
+                <!-- 원형 프로그래스바 -->
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:indicatorColor="@color/primitive_strong"
+                    app:indicatorSize="64dp"
+                    app:trackColor="@color/fill_assistive"
+                    app:trackThickness="4dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <ImageView
+                        android:id="@+id/centerIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:src="@drawable/ic_video" />
+
+                    <TextView
+                        android:id="@+id/stateText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/Caption1.Medium"
+                        android:textColor="@color/secondary_normal"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+            </FrameLayout>
+
+        </FrameLayout>
+
+        <!-- 하단 정보 영역 - empty -->
         <LinearLayout
+            android:id="@+id/emptyInfoContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#B3272930"
+            android:orientation="vertical"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="12dp">
+
+            <View
+                android:layout_width="116dp"
+                android:layout_height="19dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/rectangle_radius5"
+                android:backgroundTint="@color/fill_normal" />
+
+            <View
+                android:layout_width="40dp"
+                android:layout_height="14dp"
+                android:layout_marginBottom="4dp"
+                android:background="@drawable/rectangle_radius5"
+                android:backgroundTint="@color/fill_normal" />
+
+            <View
+                android:layout_width="90dp"
+                android:layout_height="14dp"
+                android:background="@drawable/rectangle_radius5"
+                android:backgroundTint="@color/fill_normal" />
+
+        </LinearLayout>
+
+        <!-- 하단 정보 영역 - 기본 상태 -->
+        <LinearLayout
+            android:id="@+id/infoContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingHorizontal="8dp"
             android:paddingTop="8dp"
-            android:paddingBottom="16dp">
+            android:paddingBottom="16dp"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/videoTitleTxt"
@@ -54,7 +141,6 @@
                 android:layout_marginBottom="8dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="Mov.1234"
                 android:textAppearance="@style/Headline2.Medium" />
 
             <TextView
@@ -62,21 +148,73 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
-                android:text="05:32"
                 android:textAppearance="@style/Caption1.Medium"
                 android:textColor="@color/label_assistive" />
 
             <TextView
-                android:id="@+id/tvDate"
+                android:id="@+id/dateTxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="2025년 12월 12일"
                 android:textAppearance="@style/Caption1.Medium"
                 android:textColor="@color/label_assistive" />
+
         </LinearLayout>
 
+        <!-- 하단 정보 영역 - 실패 상태 -->
+        <LinearLayout
+            android:id="@+id/failedInfoContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="12dp"
+            android:visibility="gone">
+
+            <!-- 실패 타이틀 (아이콘 + 텍스트) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:contentDescription="error"
+                    android:src="@drawable/ic_error" />
+
+                <TextView
+                    android:id="@+id/failedTitleTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/Headline2.Medium"
+                    android:textColor="@color/accent_red_normal" />
+
+            </LinearLayout>
+
+            <!-- 에러 메시지 -->
+            <TextView
+                android:id="@+id/errorMessageTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textAppearance="@style/Caption1.Medium"
+                android:textColor="@color/label_assistive" />
+
+            <!-- 취소 버튼 -->
+            <TextView
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                android:textAppearance="@style/Caption1.Medium"
+                android:textColor="@color/accent_red_normal"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
     </LinearLayout>
-
-
 </com.google.android.material.card.MaterialCardView>

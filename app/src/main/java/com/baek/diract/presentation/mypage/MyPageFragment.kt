@@ -34,13 +34,17 @@ class MyPageFragment : Fragment() {
         TODO: HomeFragment에서 navigation 설정 필요
         1. nav_graph에서 수정
         2. home fragment에서
-            val action = HomeFragmentDirections.actionHomeFragmentToVideoListFragment(tracksId)
+            val action = HomeFragmentDirections.actionHomeFragmentToVideoListFragment(tracksId,tracksTitle)
             findNavController().navigate(action)
      */
     fun navigationTemporaryEx() {
         val tracksId = "abc"
+        val tracksTitle = "곡 제목(tracksTitle)"
         binding.toVideoBtn.setOnClickListener {
-            val action = MyPageFragmentDirections.actionMyPageFragmentToVideoListFragment(tracksId)
+            val action = MyPageFragmentDirections.actionMyPageFragmentToVideoListFragment(
+                tracksId,
+                tracksTitle
+            )
             findNavController().navigate(action)
         }
     }

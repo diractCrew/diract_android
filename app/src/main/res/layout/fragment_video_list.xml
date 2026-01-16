@@ -6,80 +6,134 @@
     android:layout_height="match_parent"
     tools:context=".presentation.home.video.VideoListFragment">
 
-    <com.google.android.material.appbar.CollapsingToolbarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_scrollFlags="scroll|enterAlways">
-
-    </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-    <!-- AppBarLayout: 스크롤 시 사라지는 영역 -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+        android:background="@null"
+        app:elevation="8dp">
 
-        <!-- Toolbar -->
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/topBar"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:menu="@menu/menu_video_list_toolbar"
-            app:navigationIcon="@drawable/ic_arrow_back"
-            app:titleTextAppearance="@style/Heading1.Medium"
-            app:titleTextColor="@color/label_strong" />
-
-        <!-- 파트 선택 리스트 -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvSections"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            android:orientation="horizontal"
-            android:paddingHorizontal="16dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_scrollFlags="scroll|enterAlways" />
+            android:orientation="vertical"
+            app:layout_scrollFlags="scroll|enterAlways|snap">
+
+            <!-- Toolbar -->
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:menu="@menu/menu_video_list_toolbar"
+                app:navigationIcon="@drawable/ic_arrow_back"
+                app:titleTextAppearance="@style/Heading1.Medium"
+                app:titleTextColor="@color/label_strong" />
+            <!-- 섹션 선택 리스트 -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvSections"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        </LinearLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- 영상 리스트 -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvVideoList"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayoutList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:orientation="vertical"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="20dp"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:spanCount="2" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <LinearLayout
-        android:id="@+id/emptyView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <!-- 영상 리스트 -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvVideoList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="16dp"
+                android:visibility="gone"
+                app:elevation="0dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="2" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/addVideoBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:padding="16dp"
-            android:text="@string/add_video_message"
-            android:textAppearance="@style/Headline2.Medium"
-            android:textColor="@color/secondary_assistive"
-            app:icon="@drawable/ic_video_camera_back_add"
-            app:iconGravity="textTop"
-            app:iconPadding="24dp"
-            app:iconSize="96dp"
-            app:iconTint="@color/secondary_normal" />
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+                <!--영상 없으면 -->
+                <LinearLayout
+                    android:id="@+id/emptyView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/addVideoBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:padding="16dp"
+                        android:text="@string/add_video_message"
+                        android:textAppearance="@style/Headline2.Medium"
+                        android:textColor="@color/secondary_assistive"
+                        app:icon="@drawable/ic_video_camera_back_add"
+                        app:iconGravity="textTop"
+                        app:iconPadding="24dp"
+                        app:iconSize="96dp"
+                        app:iconTint="@color/secondary_normal" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/errorView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/error_load_failed"
+                        android:textAppearance="@style/Body1.Medium"
+                        android:textColor="@color/label_normal" />
+
+                    <TextView
+                        android:id="@+id/errReasonTxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/error_check_network"
+                        android:textAppearance="@style/Body1.Medium"
+                        android:textColor="@color/label_normal" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/reloadBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        app:icon="@drawable/ic_replay_20dp"
+                        app:iconGravity="textTop"
+                        app:iconSize="40dp" />
+                </LinearLayout>
+
+
+                <View
+                    android:id="@+id/viewSpacer"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp" />
+
+            </LinearLayout>
+        </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

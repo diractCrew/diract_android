@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     //상태바까지 확장할 뷰
     private val edgeToEdgeDestinations: Set<Int> = setOf(
-
+        R.id.videoListFragment
     )
 
     //상태바 확장 상태

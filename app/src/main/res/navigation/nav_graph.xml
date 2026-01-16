@@ -41,5 +41,8 @@
         <argument
             android:name="tracksId"
             app:argType="string" />
+        <argument
+            android:name="tracksTitle"
+            app:argType="string" />
     </fragment>
 </navigation>

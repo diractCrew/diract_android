@@ -31,7 +31,7 @@
         <!-- Shape -->
         <item name="chipCornerRadius">100dp</item>
         <!-- Toggle -->
-        <item name="android:checkable">true</item>
+        <item name="android:checkable">false</item>
         <!-- elevation -->
         <item name="elevation">3dp</item>
         <item name="android:outlineProvider">background</item>
@@ -69,7 +69,7 @@
         <item name="chipStrokeWidth">0dp</item>
 
         <!-- Background, text-->
-        <item name="chipBackgroundColor">@color/fill_assistive</item>
+        <item name="chipBackgroundColor">@color/fill_subtle</item>
         <item name="android:textAppearance">@style/Headline1.Medium</item>
         <item name="android:textColor">@color/label_strong</item>
     </style>
