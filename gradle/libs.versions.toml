@@ -1,6 +1,8 @@
 [versions]
 agp = "8.13.2"
 firebaseBom = "34.7.0"
+glide = "5.0.5"
+media3 = "1.5.1"
 hiltAndroid = "2.57.2"
 hiltAndroidCompiler = "2.57.2"
 kotlin = "2.0.21"
@@ -13,12 +15,15 @@ material = "1.13.0"
 activity = "1.12.2"
 constraintlayout = "2.2.1"
 navigationFragment = "2.9.6"
+swiperefreshlayout = "1.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-navigation-fragment = { module = "androidx.navigation:navigation-fragment", version.ref = "navigationFragment" }
 androidx-navigation-ui = { module = "androidx.navigation:navigation-ui", version.ref = "navigationFragment" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+glide-ksp = { module = "com.github.bumptech.glide:ksp", version.ref = "glide" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
@@ -32,8 +37,13 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+media3-transformer = { group = "androidx.media3", name = "media3-transformer", version.ref = "media3" }
+media3-effect = { group = "androidx.media3", name = "media3-effect", version.ref = "media3" }
+media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+androidx-navigation-safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigationFragment" }
 

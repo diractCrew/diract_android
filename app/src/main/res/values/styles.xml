@@ -20,4 +20,58 @@
     <style name="Shape.Diract.BottomNav.Indicator" parent="ShapeAppearance.Material3.Corner.Full">
         <item name="cornerSize">16dp</item>
     </style>
+
+
+    <!-- 섹션 선택 칩 -->
+    <style name="Widget.Diract.SectionChip" parent="Widget.Material3.Chip.Filter.Elevated">
+        <item name="chipStartPadding">10dp</item>
+        <item name="chipEndPadding">10dp</item>
+        <item name="android:insetBottom">5dp</item>
+        <item name="android:insetTop">5dp</item>
+        <!-- Shape -->
+        <item name="chipCornerRadius">100dp</item>
+        <!-- Toggle -->
+        <item name="android:checkable">false</item>
+        <!-- elevation -->
+        <item name="elevation">3dp</item>
+        <item name="android:outlineProvider">background</item>
+        <item name="android:translationZ">2dp</item>
+
+        <!-- Stroke -->
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipStrokeColor">@color/chip_stroke_selector</item>
+
+        <!-- checkIcon -->
+        <item name="checkedIconVisible">false</item>
+
+        <!-- Background, text-->
+        <item name="chipBackgroundColor">@color/chip_bg_selector</item>
+        <item name="android:textAppearance">@style/Headline1.Medium</item>
+        <item name="android:textColor">@color/label_strong</item>
+    </style>
+
+    <!-- 섹션 추가 칩 -->
+    <style name="Widget.Diract.AddSectionChip" parent="Widget.Material3.Chip.Assist.Elevated">
+        <item name="chipStartPadding">10dp</item>
+        <item name="chipEndPadding">10dp</item>
+        <item name="android:insetBottom">5dp</item>
+        <item name="android:insetTop">5dp</item>
+        <!-- Shape -->
+        <item name="chipCornerRadius">100dp</item>
+        <!-- Toggle -->
+        <item name="android:checkable">false</item>
+        <!-- elevation -->
+        <item name="elevation">3dp</item>
+        <item name="android:outlineProvider">background</item>
+        <item name="android:translationZ">2dp</item>
+
+        <!-- Stroke -->
+        <item name="chipStrokeWidth">0dp</item>
+
+        <!-- Background, text-->
+        <item name="chipBackgroundColor">@color/fill_subtle</item>
+        <item name="android:textAppearance">@style/Headline1.Medium</item>
+        <item name="android:textColor">@color/label_strong</item>
+    </style>
+
 </resources>

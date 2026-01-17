@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.baek.diract.databinding.FragmentMyPageBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -26,6 +27,26 @@ class MyPageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //TODO: 기능 구현
+        navigationTemporaryEx()
+    }
+
+    /*
+        TODO: HomeFragment에서 navigation 설정 필요
+        1. nav_graph에서 수정
+        2. home fragment에서
+            val action = HomeFragmentDirections.actionHomeFragmentToVideoListFragment(tracksId,tracksTitle)
+            findNavController().navigate(action)
+     */
+    fun navigationTemporaryEx() {
+        val tracksId = "abc"
+        val tracksTitle = "곡 제목(tracksTitle)"
+        binding.toVideoBtn.setOnClickListener {
+            val action = MyPageFragmentDirections.actionMyPageFragmentToVideoListFragment(
+                tracksId,
+                tracksTitle
+            )
+            findNavController().navigate(action)
+        }
     }
 
     override fun onDestroyView() {

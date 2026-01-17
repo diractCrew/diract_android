@@ -7,8 +7,16 @@
 
     <TextView
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:text="@string/my_page"
-        android:textSize="50sp"
-        android:layout_height="match_parent" />
+        android:textSize="50sp" />
+
+    <Button
+        android:id="@+id/toVideoBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="50dp"
+        android:text="toVideoList" />
 
 </FrameLayout>
