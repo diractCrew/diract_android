@@ -114,7 +114,7 @@ class MyPageFragment : Fragment() {
         val tracksId = "AndroidTestTracks1"
         val tracksTitle = "AndTracks"
         binding.toVideoBtn.setOnClickListener {
-            val action = MyPageFragmentDirections.actionMyPageFragmentToVideoListFragment(
+            val action = MyPageFragmentDirections.actionMyPageFragmentToVideoNavGraph(
                 tracksId,
                 tracksTitle
             )

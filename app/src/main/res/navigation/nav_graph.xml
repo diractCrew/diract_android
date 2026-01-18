@@ -13,7 +13,7 @@
         <!--
             TODO: 추후 네비게이션 home에서 연결할 때 주석 제거
         <action
-            android:id="@+id/action_homeFragment_to_videoListFragment"
+            android:id="@+id/action_homeFragment_to_video_nav_graph"
             app:destination="@id/videoListFragment" />
         -->
     </fragment>
@@ -27,22 +27,19 @@
         android:name="com.baek.diract.presentation.mypage.MyPageFragment"
         android:label="fragment_my_page"
         tools:layout="@layout/fragment_my_page">
-        <!--TODO: 추후 네비게이션 제대로 연결할 때 action -  myPageFragment_to_videoListFragment 제거-->
+        <!--TODO: 추후 네비게이션 제대로 연결할 때 action -  myPageFragment_to_video_nav_graph 제거-->
+
         <action
-            android:id="@+id/action_myPageFragment_to_videoListFragment"
-            app:destination="@id/videoListFragment" />
+            android:id="@+id/action_myPageFragment_to_video_nav_graph"
+            app:destination="@id/video_nav_graph">
+            <argument
+                android:name="tracksId"
+                app:argType="string" />
+            <argument
+                android:name="tracksTitle"
+                app:argType="string" />
+        </action>
     </fragment>
 
-    <fragment
-        android:id="@+id/videoListFragment"
-        android:name="com.baek.diract.presentation.home.video.VideoListFragment"
-        android:label="fragment_video_list"
-        tools:layout="@layout/fragment_video_list">
-        <argument
-            android:name="tracksId"
-            app:argType="string" />
-        <argument
-            android:name="tracksTitle"
-            app:argType="string" />
-    </fragment>
+    <include app:graph="@navigation/video_nav_graph" />
 </navigation>

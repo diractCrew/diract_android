@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/video_nav_graph"
+    app:startDestination="@id/videoListFragment">
+
+    <fragment
+        android:id="@+id/videoListFragment"
+        android:name="com.baek.diract.presentation.home.video.VideoListFragment"
+        android:label="fragment_video_list"
+        tools:layout="@layout/fragment_video_list" >
+        <argument
+            android:name="tracksId"
+            app:argType="string" />
+        <argument
+            android:name="tracksTitle"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_videoListFragment_to_sectionSettingFragment"
+            app:destination="@id/sectionSettingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/sectionSettingFragment"
+        android:name="com.baek.diract.presentation.home.video.section.SectionSettingFragment"
+        android:label="fragment_section_setting"
+        tools:layout="@layout/fragment_section_setting" />
+</navigation>
