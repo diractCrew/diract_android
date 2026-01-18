@@ -29,4 +29,13 @@
     <string name="add_section_message">파트를 추가해보세요.</string>
     <string name="edit_section_name_hint">파트 이름</string>
     <string name="set_section_header">파트 리스트</string>
+    <string name="confirm">확인</string>
+
+
+    <!-- 옵션 팝업 -->
+    <string name="edit_name_option">이름 수정</string>
+    <string name="delete_option">삭제</string>
+    <string name="move_part_option">다른 파트로 이동</string>
+    <string name="report_option">신고하기</string>
+    <string name="edit_feedback_option">피드백 수정</string>
 </resources>
