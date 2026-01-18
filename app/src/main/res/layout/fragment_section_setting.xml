@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".presentation.home.video.section.SectionSettingFragment">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/menu_section_set_toolbar"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:subtitleCentered="true"
+        app:subtitleTextAppearance="@style/Caption1.Medium"
+        app:subtitleTextColor="@color/label_normal"
+        app:title="@string/set_section_title"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/Title2.Semibold"
+        app:titleTextColor="@color/label_strong" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:text="@string/set_section_header"
+        android:textAppearance="@style/Headline2.Semibold"
+        android:textColor="@color/label_assistive" />
+
+    <LinearLayout
+        android:id="@+id/emptyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:visibility="gone">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/addPartBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:text="@string/add_section_message"
+            android:textAppearance="@style/Headline2.Medium"
+            android:textColor="@color/secondary_assistive"
+            app:icon="@drawable/ic_part_add"
+            app:iconGravity="textTop"
+            app:iconPadding="24dp"
+            app:iconSize="96dp"
+            app:iconTint="@color/secondary_normal" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPartList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="16dp"
+        android:visibility="gone" />
+
+</LinearLayout>
