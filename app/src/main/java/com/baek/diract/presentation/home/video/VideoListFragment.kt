@@ -15,7 +15,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.baek.diract.R
 import com.baek.diract.databinding.FragmentVideoListBinding
 import com.baek.diract.domain.model.VideoSummary
@@ -29,8 +28,6 @@ class VideoListFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: VideoListViewModel by viewModels()
-
-    private val args: VideoListFragmentArgs by navArgs()
 
     private lateinit var videoCardAdapter: VideoCardAdapter
     private lateinit var sectionChipAdapter: SectionChipAdapter
@@ -85,7 +82,7 @@ class VideoListFragment : Fragment() {
 
     private fun initAdapter() {
         sectionChipAdapter = SectionChipAdapter(
-            onAddSectionClick = ::onAddSectionClick,
+            onSetSectionClick = ::onSetSectionClick,
             onSectionClick = ::onSectionClick
         )
         //아이템 간격 설정
@@ -97,7 +94,8 @@ class VideoListFragment : Fragment() {
         videoCardAdapter = VideoCardAdapter(
             onItemClick = ::onVideoItemClick,
             onMoreClick = ::onVideoMoreClick,
-            onCancelClick = ::onVideoCancelClick
+            onCancelClick = ::onVideoCancelClick,
+            onRetryClick = ::onVideoRetryClick
         )
         //아이템 간격 설정
         binding.rvVideoList.apply {
@@ -116,21 +114,8 @@ class VideoListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.videoItems.collect { state ->
-                        binding.swipeRefreshLayoutList.isRefreshing = state is UiState.Loading
-
-                        when (state) {
-                            is UiState.Success -> {
-                                updateVideoList(state.data)
-                                updateViewVisibility(false, state.data.isEmpty())
-                            }
-
-                            is UiState.Error -> {
-                                updateViewVisibility(true)
-                            }
-
-                            else -> Unit
-                        }
+                    viewModel.videoItems.collect { items ->
+                        videoCardAdapter.submitList(items)
                     }
                 }
                 launch {
@@ -139,29 +124,43 @@ class VideoListFragment : Fragment() {
                         // 섹션 칩이 로드된 후 viewSpacer 높이 설정 (AppBarLayout + 상태바)
                         binding.rvSections.post {
                             binding.viewSpacer.updateLayoutParams<ViewGroup.LayoutParams> {
-                                height = binding.appBarLayout.height + statusBarHeight
+                                height =
+                                    binding.appBarLayout.height + statusBarHeight + statusBarHeight
                             }
                         }
                     }
                 }
                 launch {
-                    viewModel.isRefreshing.collect { isRefreshing ->
-                        binding.swipeRefreshLayoutList.isRefreshing = isRefreshing
+                    viewModel.uiState.collect { state ->
+                        binding.swipeRefreshLayoutList.isRefreshing = state is UiState.Loading
+                        when (state) {
+                            is UiState.Error -> showError()
+
+                            is UiState.Success -> showListOrEmpty(
+                                viewModel.videoItems.value.isEmpty()
+                            )
+
+                            else -> Unit
+                        }
                     }
                 }
             }
         }
     }
-
-    private fun updateVideoList(items: List<VideoCardItem>) {
-        videoCardAdapter.submitList(items)
+    //데이터 불러오기 에러 시
+    private fun showError() {
+        binding.errorView.visibility = View.VISIBLE
+        binding.stateView.visibility = View.VISIBLE
+        binding.rvVideoList.visibility = View.GONE
+        binding.emptyView.visibility = View.GONE
     }
 
-    private fun updateViewVisibility(isErr: Boolean, isEmpty: Boolean = true) {
-        binding.errorView.visibility = if (isErr) View.VISIBLE else View.GONE
-        if(isErr) return
+    //데이터 불러오기 성공 시
+    private fun showListOrEmpty(isEmpty: Boolean) {
+        binding.errorView.visibility = View.GONE
         binding.rvVideoList.visibility = if (isEmpty) View.GONE else View.VISIBLE
         binding.emptyView.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        binding.stateView.visibility = if (isEmpty) View.VISIBLE else View.GONE
     }
 
     // 비디오 아이템 클릭 (완료된 비디오만 클릭 가능)
@@ -181,9 +180,14 @@ class VideoListFragment : Fragment() {
         viewModel.cancelFailedItem(item)
     }
 
-    // 섹션 추가 버튼 클릭
-    private fun onAddSectionClick() {
-        Toast.makeText(requireContext(), "섹션 추가", Toast.LENGTH_SHORT).show()
+    //실패 아이템 다시 시도 버튼 클릭
+    private fun onVideoRetryClick(item: VideoCardItem.Failed) {
+        viewModel.retryFailedItem(item)
+    }
+
+    // 섹션 설정 버튼 클릭
+    private fun onSetSectionClick() {
+        Toast.makeText(requireContext(), "섹션 설정", Toast.LENGTH_SHORT).show()
         // TODO: 섹션 추가 다이얼로그 표시
     }
 

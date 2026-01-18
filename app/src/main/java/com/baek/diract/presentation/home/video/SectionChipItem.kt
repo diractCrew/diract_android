@@ -1,7 +1,7 @@
 package com.baek.diract.presentation.home.video
 
 sealed class SectionChipItem {
-    data object AddSection : SectionChipItem()
+    data object SetSection : SectionChipItem()
 
     data class SectionUi(
         val id: String,

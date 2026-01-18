@@ -18,8 +18,7 @@ class VideoCardAdapter(
     private val onItemClick: (VideoSummary) -> Unit,
     private val onMoreClick: (VideoSummary) -> Unit,
     private val onCancelClick: (VideoCardItem.Failed) -> Unit = {},
-    private val onRetryClick: (VideoCardItem.Failed) -> Unit = {},
-    private val onDeleteClick: (VideoCardItem.Failed) -> Unit = {}
+    private val onRetryClick: (VideoCardItem.Failed) -> Unit = {}
 ) : ListAdapter<VideoCardItem, VideoCardAdapter.VideoCardViewHolder>(VideoCardDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoCardViewHolder {
@@ -167,7 +166,7 @@ class VideoCardAdapter(
                     binding.btnCancel.visibility = View.VISIBLE
 
                     binding.centerIcon.setOnClickListener { onRetryClick(item) }
-                    binding.btnCancel.setOnClickListener { onDeleteClick(item) }
+                    binding.btnCancel.setOnClickListener { onCancelClick(item) }
                 }
 
                 FailType.UPLOAD -> {
@@ -178,7 +177,7 @@ class VideoCardAdapter(
                     binding.btnCancel.visibility = View.VISIBLE
 
                     binding.centerIcon.setOnClickListener { onRetryClick(item) }
-                    binding.btnCancel.setOnClickListener { onDeleteClick(item) }
+                    binding.btnCancel.setOnClickListener { onCancelClick(item) }
                 }
 
                 FailType.EXCEEDED -> {
@@ -188,7 +187,7 @@ class VideoCardAdapter(
                         itemView.context.getString(R.string.size_exceeded_message)
                     binding.btnCancel.visibility = View.GONE
 
-                    binding.centerIcon.setOnClickListener { onDeleteClick(item) }
+                    binding.centerIcon.setOnClickListener { onCancelClick(item) }
                 }
             }
 

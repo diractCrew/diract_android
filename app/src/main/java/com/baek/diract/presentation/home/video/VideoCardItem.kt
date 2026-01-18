@@ -1,5 +1,6 @@
 package com.baek.diract.presentation.home.video
 
+import android.net.Uri
 import com.baek.diract.domain.model.VideoSummary
 
 /*
@@ -29,6 +30,7 @@ sealed class VideoCardItem {
     data class Failed(
         override val id: String,
         val type: FailType,
-        val message: String? = null
+        val message: String? = null,
+        val retryInfo: RetryInfo? = null
     ) : VideoCardItem()
 }

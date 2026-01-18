@@ -15,7 +15,12 @@ class UploadVideoUseCase @Inject constructor(
         data class Compressing(val progress: Int) : UploadState
         data class Uploading(val progress: Int) : UploadState
         data object Completed : UploadState
-        data class Failed(val phase: FailPhase, val message: String?) : UploadState
+        data class Failed(
+            val phase: FailPhase,
+            val message: String?,
+            val compressedUri: Uri? = null, // 업로드 실패 시 압축된 파일 Uri
+            val duration: Double? = null // 업로드 실패 시 영상 길이
+        ) : UploadState
     }
 
     enum class FailPhase { COMPRESSION, UPLOAD }
@@ -63,12 +68,74 @@ class UploadVideoUseCase @Inject constructor(
                     DataResult.Success(Unit)
                 }
                 is DataResult.Error -> {
-                    onStateChanged(UploadState.Failed(FailPhase.UPLOAD, result.throwable.message))
+                    onStateChanged(
+                        UploadState.Failed(
+                            phase = FailPhase.UPLOAD,
+                            message = result.throwable.message,
+                            compressedUri = compressionResult.compressedUri,
+                            duration = compressionResult.durationSeconds
+                        )
+                    )
                     result
                 }
             }
         } catch (e: Exception) {
             onStateChanged(UploadState.Failed(FailPhase.COMPRESSION, e.message))
+            DataResult.Error(e)
+        }
+    }
+
+    // 업로드만 재시도 (압축 성공 후 업로드 실패 시 사용)
+    suspend fun uploadOnly(
+        compressedUri: Uri,
+        duration: Double,
+        title: String,
+        tracksId: String,
+        sectionId: String,
+        uploaderId: String,
+        onStateChanged: (UploadState) -> Unit
+    ): DataResult<Unit> {
+        return try {
+            onStateChanged(UploadState.Uploading(0))
+
+            val result = videoRepository.addVideo(
+                tracksId = tracksId,
+                sectionId = sectionId,
+                videoUri = compressedUri,
+                title = title,
+                duration = duration,
+                uploaderId = uploaderId,
+                onProgress = { progress ->
+                    onStateChanged(UploadState.Uploading(progress))
+                }
+            )
+
+            when (result) {
+                is DataResult.Success -> {
+                    onStateChanged(UploadState.Completed)
+                    DataResult.Success(Unit)
+                }
+                is DataResult.Error -> {
+                    onStateChanged(
+                        UploadState.Failed(
+                            phase = FailPhase.UPLOAD,
+                            message = result.throwable.message,
+                            compressedUri = compressedUri,
+                            duration = duration
+                        )
+                    )
+                    result
+                }
+            }
+        } catch (e: Exception) {
+            onStateChanged(
+                UploadState.Failed(
+                    phase = FailPhase.UPLOAD,
+                    message = e.message,
+                    compressedUri = compressedUri,
+                    duration = duration
+                )
+            )
             DataResult.Error(e)
         }
     }
