@@ -8,6 +8,102 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <!-- 홈화면 -->
+    <string name="home_teamspace_create">팀 스페이스를 생성하세요</string>
+    <string name="home_teamspace_create_title">팀 스페이스를 만들어보세요</string>
+    <string name="home_teamspace_create_desc">팀만의 공간을 만들고 영상으로 피드백을 시작해보세요.</string>
+    <string name="home_teamspace_empty">팀 스페이스를 만들어주세요.</string>
+    <string name="home_empty_add_project_title">프로젝트를 추가해보세요.</string>
+    <string name="home_empty_add_project_card_title">프로젝트를 추가해보세요</string>
+    <string name="home_empty_add_project_card_desc">곡과 영상을 담을 수 있는 공간입니다.</string>
+    <string name="a11y_manage_team_members">팀원 관리</string>
+    <string name="home_tooltip_manage_teamspace_title">팀 스페이스를 관리해보세요</string>
+    <string name="home_tooltip_manage_teamspace_desc">팀원을 초대하거나 팀 스페이스 이름을 변경할 수 있습니다.</string>
+    <string name="home_project_title_example">2025 대동제</string>
+    <string name="project_list_title">프로젝트 목록</string>
+    <string name="project_section_title">프로젝트</string>
+    <string name="project_add">추가</string>
+    <string name="project_action_rename">이름 수정</string>
+    <string name="project_action_delete">삭제</string>
+    <string name="project_delete_confirm_title">%1$s 프로젝트를 삭제하시겠어요?</string>
+    <string name="project_delete_confirm_desc">프로젝트 모든 내용이 삭제됩니다.</string>
+    <string name="project_create_failed">프로젝트 만들기를 실패했습니다.</string>
+    <string name="project_deleted">프로젝트가 삭제되었습니다.</string>
+    <string name="project_delete_failed">프로젝트 삭제를 실패했습니다.</string>
+    <string name="cd_add_project">프로젝트 추가</string>
+    <string name="cd_teamspace_members">팀 스페이스 멤버</string>
+    <string name="cd_confirm">확인</string>
+    <string name="project_name_hint">프로젝트 이름</string>
+    <string name="project_name_counter_format">%1$d/%2$d</string>
+    <string name="project_add_song">곡 추가하기</string>
+    <string name="project_empty_add_song_desc">곡이 없습니다. 추가해보세요</string>
+    <string name="project_action_playlist_name">플레이리스트 이름</string>
+    <string name="error_name_max_length">곡 이름은 %1$d자 이하로 입력해 주세요.</string>
+    <string name="error_load_songs">곡을 불러올 수 없습니다.</string>
+    <string name="action_retry">재시도</string>
+    <string name="project_rename_success">프로젝트 이름을 수정했습니다.</string>
+    <string name="project_rename_failed">프로젝트 이름 수정을 실패했습니다.</string>
+    <string name="playlist_name_label">곡 리스트 이름</string>
+    <string name="common_counter_format">%1$d/%2$d</string> <!-- ex) 7/20 -->
+    <string name="common_error_max_length">곡 이름은 %1$d자 이하로 입력해 주세요.</string>
+    <string name="song_add_title">곡 추가하기</string>
+    <string name="song_add_prompt">추가할 곡의 이름을 입력하세요</string>
+    <string name="song_add_hint_example">(예시) SEVENTEEN - 만세</string>
+    <string name="song_add_cta">곡 추가하기</string>
+    <string name="song_delete_confirm_title">%1$s 곡을 삭제하시겠어요?</string>
+    <string name="song_delete_confirm_desc">곡 안의 모든 내용이 삭제됩니다.</string>
+    <string name="song_delete_success">곡이 삭제되었습니다.</string>
+    <string name="song_delete_failed">곡 삭제를 실패했습니다.</string>
+
+
+    <!-- Common -->
+    <string name="common_confirm">확인</string>
+    <string name="common_cancel">취소</string>
+    <string name="common_delete">삭제</string>
+    <string name="common_exit">종료</string>
+    <string name="common_leave">나가기</string>
+    <string name="common_kick">내보내기</string>
+    <string name="common_edit">수정</string>
+
+
+
+    <!-- 팀스페이스 생성 화면 -->
+    <string name="teamspace_create_title">팀 스페이스 만들기</string>
+    <string name="teamspace_create_prompt">팀 스페이스 이름을 입력하세요.</string>
+    <string name="teamspace_name_hint">팀 이름</string>
+    <string name="teamspace_create_cta">팀 스페이스 만들기</string>
+    <string name="teamspace_close_warning_title">저장하지 않고 종료하시겠어요?</string>
+    <string name="teamspace_close_warning_desc">저장하지 않은 변경사항은 사라집니다.</string>
+    <string name="teamspace_create_failed_title">팀 스페이스 생성을 실패했습니다.</string>
+    <string name="teamspace_create_failed_desc">네트워크 상태를 확인한 뒤 다시 생성해 주세요.</string>
+    <string name="teamspace_created">팀을 생성했습니다.</string>
+    <string name="teamspace_invite_title">팀 스페이스에 팀원을 초대해 보세요.</string>
+    <string name="teamspace_invite_desc">팀원 태그를 통해 팀원을 추가할 수 있습니다.</string>
+    <string name="teamspace_invite_later">다음에 하기</string>
+    <string name="teamspace_invite_now">팀 멤버 초대하기</string>
+
+    <!-- 팀스페이스 팀원 설정 화면 -->
+    <string name="teamspace_current_name">현재 팀스페이스 이름</string>
+    <string name="teamspace_members">팀원</string>
+    <string name="teamspace_empty_members">팀원을 초대해보세요.</string>
+    <string name="teamspace_action_leave">팀 스페이스 나가기</string>
+    <string name="teamspace_action_delete">팀 스페이스 삭제하기</string>
+    <string name="teamspace_action_give_owner">팀장 권한 주기</string>
+    <string name="teamspace_action_kick">팀에서 내보내기</string>
+    <string name="teamspace_give_owner_failed">팀장 권한 주기를 실패했습니다.</string>
+    <string name="teamspace_rename_title">팀 스페이스 이름 수정</string>
+    <string name="teamspace_rename_failed">팀 스페이스 이름 수정을 실패했습니다.</string>
+    <string name="teamspace_kick_member_title">%1$s 팀원을 내보내시겠어요?</string>
+    <string name="teamspace_kick_member_desc">이후 다시 초대할 수 있습니다.</string>
+    <string name="teamspace_kick_selected_title">선택한 팀원들을 내보내시겠어요?</string>
+    <string name="teamspace_kick_selected_desc">이후 다시 초대할 수 있습니다.</string>
+    <string name="teamspace_delete_title">%1$s 팀 스페이스를 삭제하시겠어요?</string>
+    <string name="teamspace_delete_desc">팀 스페이스와 멤버 목록이 모두 초기화되며 되돌릴 수 없습니다.</string>
+    <string name="teamspace_cannot_leave_title">팀 스페이스를 나갈 수 없습니다.</string>
+    <string name="teamspace_cannot_leave_desc">팀 스페이스에서 나가려면 팀장 권한을 다른 팀원에게 양도해야 합니다.</string>
+    <string name="teamspace_load_failed">불러오기를 실패했습니다.</string>
+
+
     <!-- 영상 리스트 화면 -->
     <string name="add_video">영상 추가</string>
     <string name="add_video_message">동영상을 추가해보세요</string>
