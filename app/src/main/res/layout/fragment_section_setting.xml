@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.home.video.section.SectionSettingFragment">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/menu_section_set_toolbar"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:subtitleCentered="true"
+        app:subtitleTextAppearance="@style/Caption1.Medium"
+        app:subtitleTextColor="@color/label_normal"
+        app:title="@string/set_section_title"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/Title2.Semibold"
+        app:titleTextColor="@color/label_strong" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:text="@string/set_section_header"
+        android:textAppearance="@style/Headline2.Semibold"
+        android:textColor="@color/label_assistive"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <LinearLayout
+        android:id="@+id/emptyView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/addPartBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:text="@string/add_section_message"
+            android:textAppearance="@style/Headline2.Medium"
+            android:textColor="@color/secondary_assistive"
+            app:icon="@drawable/ic_part_add"
+            app:iconGravity="textTop"
+            app:iconPadding="24dp"
+            app:iconSize="96dp"
+            app:iconTint="@color/secondary_normal" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPartList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/actionContainer"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+
+    <LinearLayout
+        android:id="@+id/actionContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_action_container"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/confirmBtn"
+            style="@style/Widget.Diract.ActionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/confirm" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

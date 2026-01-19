@@ -5,17 +5,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.baek.diract.databinding.ItemAddSectionChipBinding
 import com.baek.diract.databinding.ItemSectionChipBinding
+import com.baek.diract.databinding.ItemSetSectionChipBinding
 
 class SectionChipAdapter(
-    private val onAddSectionClick: () -> Unit,
+    private val onSetSectionClick: () -> Unit,
     private val onSectionClick: (SectionChipItem.SectionUi) -> Unit
 ) : ListAdapter<SectionChipItem, RecyclerView.ViewHolder>(SectionChipDiffCallback) {
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
-            is SectionChipItem.AddSection -> VIEW_TYPE_ADD
+            is SectionChipItem.SetSection -> VIEW_TYPE_ADD
             is SectionChipItem.SectionUi -> VIEW_TYPE_SECTION
         }
     }
@@ -24,7 +24,7 @@ class SectionChipAdapter(
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             VIEW_TYPE_ADD -> AddSectionViewHolder(
-                ItemAddSectionChipBinding.inflate(inflater, parent, false)
+                ItemSetSectionChipBinding.inflate(inflater, parent, false)
             )
 
             VIEW_TYPE_SECTION -> SectionUiViewHolder(
@@ -37,18 +37,18 @@ class SectionChipAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val item = getItem(position)) {
-            is SectionChipItem.AddSection -> (holder as AddSectionViewHolder).bind()
+            is SectionChipItem.SetSection -> (holder as AddSectionViewHolder).bind()
             is SectionChipItem.SectionUi -> (holder as SectionUiViewHolder).bind(item)
         }
     }
 
     inner class AddSectionViewHolder(
-        private val binding: ItemAddSectionChipBinding
+        private val binding: ItemSetSectionChipBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind() {
             binding.root.setOnClickListener {
-                onAddSectionClick()
+                onSetSectionClick()
             }
         }
     }
@@ -76,7 +76,7 @@ class SectionChipAdapter(
                 newItem: SectionChipItem
             ): Boolean {
                 return when {
-                    oldItem is SectionChipItem.AddSection && newItem is SectionChipItem.AddSection -> true
+                    oldItem is SectionChipItem.SetSection && newItem is SectionChipItem.SetSection -> true
                     oldItem is SectionChipItem.SectionUi && newItem is SectionChipItem.SectionUi -> oldItem.id == newItem.id
                     else -> false
                 }

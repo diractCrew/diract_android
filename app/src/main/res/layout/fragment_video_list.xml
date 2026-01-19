@@ -66,9 +66,11 @@
                 app:spanCount="2" />
 
             <LinearLayout
+                android:id="@+id/stateView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:visibility="gone"
                 android:orientation="vertical">
                 <!--영상 없으면 -->
                 <LinearLayout

@@ -9,4 +9,5 @@ data class VideoSummary(
     val thumbnailUrl: String,
     val createdAt: LocalDate,
     val trackId: String,
+    val uploaderId: String
 )
