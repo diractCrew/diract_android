@@ -54,6 +54,10 @@
         <item name="android:fontFamily">@font/pretendard_semibold</item>
     </style>
 
+    <style name="Title2.Medium">
+        <item name="android:fontFamily">@font/pretendard_medium</item>
+    </style>
+
     <!-- Heading -->
     <style name="Heading1.Semibold">
         <item name="android:fontFamily">@font/pretendard_semibold</item>

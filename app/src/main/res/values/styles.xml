@@ -82,4 +82,74 @@
         <item name="android:textColor">@color/action_btn_text_selector</item>
         <item name="cornerRadius">15dp</item>
     </style>
+
+    <!-- ///////////// Dialog Styles ///////////// -->
+
+    <!-- 기본 다이얼로그 테마 -->
+    <style name="Theme.Diract.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <!-- 배경 dim -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.4</item>
+
+        <!-- 배경색 -->
+        <item name="android:background">@color/background_normal</item>
+        <item name="colorSurface">@color/background_normal</item>
+
+        <!-- 타이틀 스타일 -->
+        <item name="materialAlertDialogTitleTextStyle">@style/Widget.Diract.Dialog.Title</item>
+
+        <!-- 본문 스타일 -->
+        <item name="materialAlertDialogBodyTextStyle">@style/Widget.Diract.Dialog.Body</item>
+
+        <!-- 버튼 스타일 -->
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Diract.Dialog.Button.Positive</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.Diract.Dialog.Button.Negative</item>
+    </style>
+
+    <!-- 버튼 1개짜리 다이얼로그 테마 (확인만) -->
+    <style name="Theme.Diract.Dialog.Confirm">
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Diract.Dialog.Button.Confirm</item>
+    </style>
+
+    <!-- 위험 액션용 다이얼로그 테마 (삭제, 내보내기 등) -->
+    <style name="Theme.Diract.Dialog.Destructive">
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Diract.Dialog.Button.Destructive</item>
+    </style>
+
+    <!-- 다이얼로그 타이틀 스타일 -->
+    <style name="Widget.Diract.Dialog.Title" parent="MaterialAlertDialog.Material3.Title.Text">
+        <item name="android:textAppearance">@style/Title2.Medium</item>
+        <item name="android:textColor">@color/label_strong</item>
+    </style>
+
+    <!-- 다이얼로그 본문 스타일 -->
+    <style name="Widget.Diract.Dialog.Body" parent="MaterialAlertDialog.Material3.Body.Text">
+        <item name="android:textAppearance">@style/Body1.Medium</item>
+        <item name="android:textColor">@color/label_normal</item>
+    </style>
+
+    <!-- 기본 버튼 (Positive - 확인) -->
+    <style name="Widget.Diract.Dialog.Button.Positive" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textAppearance">@style/Footnote.Medium</item>
+        <item name="android:textColor">@color/label_normal</item>
+        <item name="rippleColor">@color/fill_assistive</item>
+    </style>
+
+    <!-- 취소 버튼 (Negative) -->
+    <style name="Widget.Diract.Dialog.Button.Negative" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textAppearance">@style/Footnote.Medium</item>
+        <item name="android:textColor">@color/label_assistive</item>
+    </style>
+
+    <!-- 버튼 1개짜리 확인 버튼 -->
+    <style name="Widget.Diract.Dialog.Button.Confirm" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textAppearance">@style/Footnote.Medium</item>
+        <item name="android:textColor">@color/label_strong</item>
+    </style>
+
+    <!-- 위험 액션 버튼 (삭제, 내보내기 등) -->
+    <style name="Widget.Diract.Dialog.Button.Destructive" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textAppearance">@style/Footnote.Medium</item>
+        <item name="android:textColor">@color/accent_red_normal</item>
+    </style>
 </resources>

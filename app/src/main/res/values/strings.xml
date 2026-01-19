@@ -38,4 +38,10 @@
     <string name="move_part_option">다른 파트로 이동</string>
     <string name="report_option">신고하기</string>
     <string name="edit_feedback_option">피드백 수정</string>
+
+    <!-- 다이얼로그 메세지 -->
+    <string name="dialog_confirm">확인</string>
+    <string name="dialog_cancel">취소</string>
+    <string name="dialog_delete">삭제</string>
+
 </resources>
