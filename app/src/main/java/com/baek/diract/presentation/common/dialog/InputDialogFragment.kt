@@ -1,6 +1,7 @@
 package com.baek.diract.presentation.common.dialog
 
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +15,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.window.OnBackInvokedDispatcher
 import androidx.activity.OnBackPressedCallback
@@ -23,6 +25,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import androidx.core.view.isVisible
 import com.baek.diract.R
 import com.baek.diract.databinding.FragmentInputDialogBinding
+import com.baek.diract.presentation.common.LoadingOverlay
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 /**
@@ -47,7 +50,7 @@ class InputDialogFragment : BottomSheetDialogFragment() {
 
     private var _binding: FragmentInputDialogBinding? = null
     private val binding get() = _binding!!
-
+    private val loadingOverlay by lazy { LoadingOverlay(this) }
     var onConfirm: ((String) -> Unit)? = null
 
     private val maxLength: Int
@@ -141,10 +144,13 @@ class InputDialogFragment : BottomSheetDialogFragment() {
         }
 
         binding.confirmBtn.setOnClickListener {
+            val imm = view?.context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view?.windowToken, 0)
+
             val inputText = binding.inputTxt.text?.toString()?.trim() ?: ""
             if (inputText.isNotEmpty() && inputText.length <= maxLength) {
                 onConfirm?.invoke(inputText)
-                dismiss()
+                loadingOverlay.show()
             }
         }
 
