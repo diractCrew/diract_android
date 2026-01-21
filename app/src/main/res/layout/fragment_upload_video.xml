@@ -63,7 +63,7 @@
 
                 <!-- 로딩 인디케이터 -->
                 <ProgressBar
-                    android:id="@+id/loadingIndicator"
+                    android:id="@+id/videoLoadingView"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_gravity="center"
@@ -193,6 +193,22 @@
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:spanCount="4"
                 tools:listitem="@layout/item_gallery_video" />
+
+            <!-- 로딩 인디케이터 -->
+            <FrameLayout
+                android:id="@+id/galleryLoadingView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ProgressBar
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:indeterminate="true"
+                    android:indeterminateTint="@color/secondary_strong" />
+            </FrameLayout>
+
 
             <!-- 빈 상태 -->
             <LinearLayout

@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:background="@drawable/rectangle_radius10"
-        android:backgroundTint="@color/fill_strong"
+        android:backgroundTint="@color/duration_bg_tint_selector"
         android:paddingHorizontal="4dp"
         android:paddingVertical="5dp"
         android:textAppearance="@style/Caption1.Medium"
