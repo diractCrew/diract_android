@@ -19,6 +19,7 @@
         tools:background="@color/fill_normal" />
 
     <TextView
+        android:id="@+id/durationTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -26,7 +27,6 @@
         android:backgroundTint="@color/fill_strong"
         android:paddingHorizontal="4dp"
         android:paddingVertical="5dp"
-        android:text="00:42"
         android:textAppearance="@style/Caption1.Medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
