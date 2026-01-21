@@ -4,6 +4,8 @@ import android.content.ContentUris
 import android.content.Context
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
+import com.baek.diract.domain.common.DataResult
 import com.baek.diract.domain.model.GalleryVideo
 import com.baek.diract.domain.repository.GalleryRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -16,9 +18,16 @@ class GalleryRepositoryImpl @Inject constructor(
     @field:ApplicationContext private val context: Context
 ) : GalleryRepository {
 
-    override suspend fun getGalleryVideos(): List<GalleryVideo> = withContext(Dispatchers.IO) {
-        queryGalleryVideos()
-    }
+    override suspend fun getGalleryVideos(): DataResult<List<GalleryVideo>> =
+        withContext(Dispatchers.IO) {
+            try {
+                val result = queryGalleryVideos()
+                DataResult.Success(result)
+            } catch (e: Exception) {
+                Log.e(TAG, "갤러리에서 영상 불러오기 실패", e)
+                DataResult.Error(e)
+            }
+        }
 
     private fun queryGalleryVideos(): List<GalleryVideo> {
         val videos = mutableListOf<GalleryVideo>()
@@ -101,5 +110,9 @@ class GalleryRepositoryImpl @Inject constructor(
         }
 
         return videos
+    }
+
+    companion object {
+        const val TAG = "GalleryRepositoryImpl"
     }
 }
