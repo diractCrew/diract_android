@@ -19,6 +19,7 @@ class UploadVideoUseCase @Inject constructor(
             val phase: FailPhase,
             val message: String?,
             val compressedUri: Uri? = null, // 업로드 실패 시 압축된 파일 Uri
+            val thumbnailUri: Uri? = null, // 업로드 실패 시 썸네일 Uri
             val duration: Double? = null // 업로드 실패 시 영상 길이
         ) : UploadState
     }
@@ -53,6 +54,7 @@ class UploadVideoUseCase @Inject constructor(
                 tracksId = tracksId,
                 sectionId = sectionId,
                 videoUri = compressionResult.compressedUri,
+                thumbnailUri = compressionResult.thumbnailUri,
                 title = title,
                 duration = compressionResult.durationSeconds,
                 uploaderId = uploaderId,
@@ -73,6 +75,7 @@ class UploadVideoUseCase @Inject constructor(
                             phase = FailPhase.UPLOAD,
                             message = result.throwable.message,
                             compressedUri = compressionResult.compressedUri,
+                            thumbnailUri = compressionResult.thumbnailUri,
                             duration = compressionResult.durationSeconds
                         )
                     )
@@ -88,6 +91,7 @@ class UploadVideoUseCase @Inject constructor(
     // 업로드만 재시도 (압축 성공 후 업로드 실패 시 사용)
     suspend fun uploadOnly(
         compressedUri: Uri,
+        thumbnailUri: Uri,
         duration: Double,
         title: String,
         tracksId: String,
@@ -102,6 +106,7 @@ class UploadVideoUseCase @Inject constructor(
                 tracksId = tracksId,
                 sectionId = sectionId,
                 videoUri = compressedUri,
+                thumbnailUri = thumbnailUri,
                 title = title,
                 duration = duration,
                 uploaderId = uploaderId,
@@ -121,6 +126,7 @@ class UploadVideoUseCase @Inject constructor(
                             phase = FailPhase.UPLOAD,
                             message = result.throwable.message,
                             compressedUri = compressedUri,
+                            thumbnailUri = thumbnailUri,
                             duration = duration
                         )
                     )
@@ -133,6 +139,7 @@ class UploadVideoUseCase @Inject constructor(
                     phase = FailPhase.UPLOAD,
                     message = e.message,
                     compressedUri = compressedUri,
+                    thumbnailUri = thumbnailUri,
                     duration = duration
                 )
             )
