@@ -59,7 +59,6 @@ class UploadVideoViewModel @Inject constructor(
                 is DataResult.Success -> {
                     _allVideos.value = result.data
                     _galleryState.value = UiState.Success(Unit)
-                    Log.d("UploadVideoViewModel",result.data.toString())
                 }
 
                 is DataResult.Error -> {

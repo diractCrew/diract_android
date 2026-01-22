@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.ScrollView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -166,7 +167,10 @@ class UploadVideoFragment : BottomSheetDialogFragment() {
 
     private fun initAdapter() {
         galleryVideoAdapter = GalleryVideoAdapter(
-            onItemClick = { item -> viewModel.selectVideo(item) }
+            onItemClick = { item ->
+                binding.scrollView.fullScroll(ScrollView.FOCUS_UP);
+                viewModel.selectVideo(item)
+            }
         )
 
         val spacingPx = (1 * resources.displayMetrics.density).toInt()

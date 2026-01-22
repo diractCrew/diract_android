@@ -1,6 +1,5 @@
 package com.baek.diract.presentation.home.video.upload
 
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
