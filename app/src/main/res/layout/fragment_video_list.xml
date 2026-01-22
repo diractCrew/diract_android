@@ -70,7 +70,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:visibility="gone"
                 android:orientation="vertical">
                 <!--영상 없으면 -->
                 <LinearLayout
@@ -100,8 +99,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:orientation="vertical"
-                    android:visibility="gone">
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -118,14 +116,12 @@
                         android:textAppearance="@style/Body1.Medium"
                         android:textColor="@color/label_normal" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/reloadBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="16dp"
                         android:background="@android:color/transparent"
-                        app:icon="@drawable/ic_replay_20dp"
-                        app:iconGravity="textTop"
-                        app:iconSize="40dp" />
+                        android:src="@drawable/ic_replay_20dp" />
                 </LinearLayout>
 
 

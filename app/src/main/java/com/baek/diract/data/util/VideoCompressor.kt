@@ -1,6 +1,7 @@
 package com.baek.diract.data.util
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import androidx.media3.common.MediaItem
@@ -10,8 +11,11 @@ import androidx.media3.transformer.ProgressHolder
 import androidx.media3.transformer.Transformer
 import com.baek.diract.domain.model.CompressionResult
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileOutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
@@ -30,20 +34,30 @@ class VideoCompressor @Inject constructor(
     suspend fun compress(
         inputUri: Uri,
         progressListener: ProgressListener? = null
-    ): CompressionResult = suspendCancellableCoroutine { continuation ->
-        val outputFile = createOutputFile()
+    ): CompressionResult {
+        val compressedUri = compressVideo(inputUri, progressListener)
+        val durationSeconds = getVideoDuration(compressedUri)
+        val thumbnailUri = extractThumbnail(compressedUri)
+
+        return CompressionResult(
+            compressedUri = compressedUri,
+            durationSeconds = durationSeconds,
+            thumbnailUri = thumbnailUri
+        )
+    }
+
+    // 비디오 압축 (내부 함수)
+    private suspend fun compressVideo(
+        inputUri: Uri,
+        progressListener: ProgressListener?
+    ): Uri = suspendCancellableCoroutine { continuation ->
+        val outputFile = createVideoOutputFile()
         val outputPath = outputFile.absolutePath
 
         val transformer = Transformer.Builder(context)
             .addListener(object : Transformer.Listener {
                 override fun onCompleted(composition: androidx.media3.transformer.Composition, exportResult: ExportResult) {
-                    val durationSeconds = getVideoDuration(Uri.fromFile(outputFile))
-                    continuation.resume(
-                        CompressionResult(
-                            compressedUri = Uri.fromFile(outputFile),
-                            durationSeconds = durationSeconds
-                        )
-                    )
+                    continuation.resume(Uri.fromFile(outputFile))
                 }
 
                 override fun onError(
@@ -92,6 +106,32 @@ class VideoCompressor @Inject constructor(
         }
     }
 
+    // 비디오에서 썸네일 추출 (1초 지점)
+    suspend fun extractThumbnail(videoUri: Uri): Uri = withContext(Dispatchers.IO) {
+        val retriever = MediaMetadataRetriever()
+        try {
+            retriever.setDataSource(context, videoUri)
+
+            // 1초 지점에서 프레임 추출 (마이크로초 단위)
+            val bitmap = retriever.getFrameAtTime(
+                1_000_000L,
+                MediaMetadataRetriever.OPTION_CLOSEST_SYNC
+            ) ?: retriever.getFrameAtTime(0L) // 1초가 없으면 첫 프레임
+
+            requireNotNull(bitmap) { "Failed to extract thumbnail from video" }
+
+            val thumbnailFile = createThumbnailOutputFile()
+            FileOutputStream(thumbnailFile).use { outputStream ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
+            }
+            bitmap.recycle()
+
+            Uri.fromFile(thumbnailFile)
+        } finally {
+            retriever.release()
+        }
+    }
+
     // 비디오 길이 조회 (초 단위)
     fun getVideoDuration(uri: Uri): Double {
         val retriever = MediaMetadataRetriever()
@@ -108,11 +148,19 @@ class VideoCompressor @Inject constructor(
         }
     }
 
-    private fun createOutputFile(): File {
+    private fun createVideoOutputFile(): File {
         val cacheDir = File(context.cacheDir, "compressed_videos")
         if (!cacheDir.exists()) {
             cacheDir.mkdirs()
         }
         return File(cacheDir, "compressed_${System.currentTimeMillis()}.mp4")
+    }
+
+    private fun createThumbnailOutputFile(): File {
+        val cacheDir = File(context.cacheDir, "thumbnails")
+        if (!cacheDir.exists()) {
+            cacheDir.mkdirs()
+        }
+        return File(cacheDir, "thumbnail_${System.currentTimeMillis()}.jpg")
     }
 }

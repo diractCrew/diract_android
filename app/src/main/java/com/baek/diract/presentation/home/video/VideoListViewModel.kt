@@ -6,14 +6,18 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.baek.diract.domain.common.DataResult
+import com.baek.diract.domain.model.Section
 import com.baek.diract.domain.repository.AuthRepository
 import com.baek.diract.domain.repository.VideoRepository
 import com.baek.diract.domain.usecase.UploadVideoUseCase
 import com.baek.diract.presentation.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
@@ -29,23 +33,39 @@ class VideoListViewModel @Inject constructor(
     val trackId: String = checkNotNull(savedStateHandle[KEY_TRACK_ID]) {
         "trackId값 없이 VideoList 접근이 불가능합니다."
     }
-    val trackTitle: String? = savedStateHandle[KEY_TRACK_TITLE]
+    val trackTitle: String = checkNotNull(savedStateHandle[KEY_TRACK_TITLE]) {
+        "trackId값 없이 VideoList 접근이 불가능합니다."
+    }
 
     // 비디오 아이템
     private val _videoItems = MutableStateFlow<List<VideoCardItem>>(emptyList())
     val videoItems: StateFlow<List<VideoCardItem>> = _videoItems.asStateFlow()
 
-    private val _sectionChipItems = MutableStateFlow<List<SectionChipItem>>(emptyList())
-    val sectionChipItems: StateFlow<List<SectionChipItem>> = _sectionChipItems.asStateFlow()
+    // 원본 섹션 데이터
+    private val _sections = MutableStateFlow<List<Section>>(emptyList())
+    private val _selectedSectionId = MutableStateFlow<String?>(null)
 
-    //로딩, 성공 실패 관리
-    private val _uiState =
-        MutableStateFlow<UiState<Long>>(UiState.None) //로딩 상태 변화 관측을 위한 System.currentTimeMillis() 값 넣음
+    // VideoListFragment용 섹션 칩
+    val sectionChipItems: StateFlow<List<SectionChipItem>> = combine(
+        _sections,
+        _selectedSectionId
+    ) { sections, selectedId ->
+        buildList {
+            add(SectionChipItem.SetSection)
+            addAll(sections.map { section ->
+                SectionChipItem.SectionUi(
+                    id = section.id,
+                    name = section.title,
+                    isSelected = section.id == selectedId
+                )
+            })
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+
+    //로딩, 성공 실패 관리(로딩 상태 변화 관측을 위한 System.currentTimeMillis() 값 넣음)
+    private val _uiState = MutableStateFlow<UiState<Long>>(UiState.None)
     val uiState: StateFlow<UiState<Long>> = _uiState.asStateFlow()
-
-    init {
-        loadInitialData()
-    }
 
     // 현재 비디오 리스트 가져오기
     private fun getCurrentVideoList(): List<VideoCardItem> {
@@ -59,7 +79,7 @@ class VideoListViewModel @Inject constructor(
     }
 
     // 초기 데이터 로드 (섹션 -> 비디오)
-    private fun loadInitialData() {
+    fun refreshAll() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
 
@@ -67,27 +87,17 @@ class VideoListViewModel @Inject constructor(
             when (val sectionsResult = videoRepository.getSections(trackId)) {
                 is DataResult.Success -> {
                     val sections = sectionsResult.data
+                    _sections.value = sections
 
-                    // "일반" 섹션 찾기, 없으면 첫 번째 섹션 선택
-                    val defaultSection = sections.find { it.title == DEFAULT_SECTION_TITLE }
-                        ?: sections.firstOrNull()
+                    val defaultSectionId = _selectedSectionId.value
+                        ?: sections.find { it.title == DEFAULT_SECTION_TITLE }?.id
+                        ?: sections.firstOrNull()?.id
 
-                    // SectionChipItem으로 변환
-                    val sectionItems = buildList {
-                        add(SectionChipItem.SetSection)
-                        addAll(sections.map { section ->
-                            SectionChipItem.SectionUi(
-                                id = section.id,
-                                name = section.title,
-                                isSelected = section.id == defaultSection?.id
-                            )
-                        })
-                    }
-                    _sectionChipItems.value = sectionItems
+                    _selectedSectionId.value = defaultSectionId
 
                     // 2. 선택된 섹션의 비디오 로드
-                    if (defaultSection != null) {
-                        loadVideosForSection(defaultSection.id)
+                    if (defaultSectionId != null) {
+                        loadVideosForSection(defaultSectionId)
                     } else {
                         _videoItems.value = emptyList()
                         _uiState.value = UiState.Success(System.currentTimeMillis())
@@ -95,7 +105,6 @@ class VideoListViewModel @Inject constructor(
                 }
 
                 is DataResult.Error -> {
-                    Log.e(TAG, "Failed to load sections", sectionsResult.throwable)
                     _uiState.value = UiState.Error(
                         message = sectionsResult.throwable.message,
                         throwable = sectionsResult.throwable
@@ -117,6 +126,7 @@ class VideoListViewModel @Inject constructor(
                             item is VideoCardItem.Failed
                 }
                 _videoItems.value = inProgressItems + completedItems
+                Log.d("VideoListViewModel", completedItems.toString())
                 _uiState.value = UiState.Success(System.currentTimeMillis())
             }
 
@@ -162,12 +172,14 @@ class VideoListViewModel @Inject constructor(
             // 업로드 실패: 업로드만 재시도
             FailType.UPLOAD -> {
                 val compressedUri = retryInfo.compressedUri ?: return
+                val thumbnailUri = retryInfo.thumbnailUri ?: return
                 val duration = retryInfo.duration ?: return
 
                 changeToUploadingState(retryId)
                 viewModelScope.launch {
                     uploadVideoUseCase.uploadOnly(
                         compressedUri = compressedUri,
+                        thumbnailUri = thumbnailUri,
                         duration = duration,
                         title = retryInfo.title,
                         tracksId = trackId,
@@ -212,6 +224,7 @@ class VideoListViewModel @Inject constructor(
                 }
                 val updatedRetryInfo = retryInfo.copy(
                     compressedUri = state.compressedUri ?: retryInfo.compressedUri,
+                    thumbnailUri = state.thumbnailUri ?: retryInfo.thumbnailUri,
                     duration = state.duration ?: retryInfo.duration
                 )
                 changeToFailedState(uploadId, failType, state.message, updatedRetryInfo)
@@ -234,12 +247,9 @@ class VideoListViewModel @Inject constructor(
 
     // 섹션 선택
     fun selectSection(sectionId: String) {
-        _sectionChipItems.value = _sectionChipItems.value.map { item ->
-            when (item) {
-                is SectionChipItem.SectionUi -> item.copy(isSelected = item.id == sectionId)
-                else -> item
-            }
-        }
+        if (getSelectedSectionId() == sectionId) return
+
+        _selectedSectionId.value = sectionId
 
         // 선택된 섹션의 비디오 로드
         viewModelScope.launch {
@@ -289,6 +299,7 @@ class VideoListViewModel @Inject constructor(
                                 originalUri = videoUri,
                                 title = title,
                                 compressedUri = state.compressedUri,
+                                thumbnailUri = state.thumbnailUri,
                                 duration = state.duration
                             )
                             changeToFailedState(uploadId, failType, state.message, retryInfo)
@@ -305,10 +316,7 @@ class VideoListViewModel @Inject constructor(
 
     // 현재 선택된 섹션 ID 반환
     private fun getSelectedSectionId(): String? {
-        return _sectionChipItems.value
-            .filterIsInstance<SectionChipItem.SectionUi>()
-            .find { it.isSelected }
-            ?.id
+        return _selectedSectionId.value
     }
 
     // 압축 중 아이템 추가

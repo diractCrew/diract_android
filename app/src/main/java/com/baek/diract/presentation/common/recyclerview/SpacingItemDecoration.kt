@@ -39,20 +39,23 @@ class SpacingItemDecoration(
 
         when (orientation) {
             RecyclerView.HORIZONTAL -> {
-                if (includeEdge || !isLast) {
-                    outRect.right = spacing
-                }
-                if (includeEdge && position == 0) {
+                if (position > 0) {
                     outRect.left = spacing
+                }
+                if (includeEdge) {
+                    if (position == 0) outRect.left = spacing
+                    if (isLast) outRect.right = spacing
                 }
             }
 
             RecyclerView.VERTICAL -> {
-                if (includeEdge || !isLast) {
-                    outRect.bottom = spacing
-                }
-                if (includeEdge && position == 0) {
+                // 첫 번째 아이템 제외하고 top spacing 적용
+                if (position > 0) {
                     outRect.top = spacing
+                }
+                if (includeEdge) {
+                    if (position == 0) outRect.top = spacing
+                    if (isLast) outRect.bottom = spacing
                 }
             }
         }

@@ -4,5 +4,6 @@ import android.net.Uri
 
 data class CompressionResult(
     val compressedUri: Uri,
-    val durationSeconds: Double
+    val durationSeconds: Double,
+    val thumbnailUri: Uri
 )
