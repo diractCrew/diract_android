@@ -147,7 +147,7 @@ class SectionSettingFragment : Fragment() {
         // 10자 이상일 때 토스트 한 번만 표시
         if (length >= 10 && !hasShownMaxLengthToast) {
             hasShownMaxLengthToast = true
-            CustomToast.showPositive(
+            CustomToast.showNegative(
                 requireContext(),
                 getString(R.string.toast_section_name_max_length, 10),
                 Toast.LENGTH_LONG
