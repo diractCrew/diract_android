@@ -17,6 +17,7 @@ interface VideoRemoteDataSource {
         tracksId: String,
         sectionId: String,
         videoUri: Uri,
+        thumbnailUri: Uri,
         title: String,
         duration: Double,
         uploaderId: String,
