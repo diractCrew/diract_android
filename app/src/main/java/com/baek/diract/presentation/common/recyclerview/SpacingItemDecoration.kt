@@ -39,11 +39,12 @@ class SpacingItemDecoration(
 
         when (orientation) {
             RecyclerView.HORIZONTAL -> {
-                if (includeEdge || !isLast) {
-                    outRect.right = spacing
-                }
-                if (includeEdge && position == 0) {
+                if (position > 0) {
                     outRect.left = spacing
+                }
+                if (includeEdge) {
+                    if (position == 0) outRect.left = spacing
+                    if (isLast) outRect.right = spacing
                 }
             }
 
