@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 //갤러리 접근 repository
 class GalleryRepositoryImpl @Inject constructor(
-    @field:ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context
 ) : GalleryRepository {
 
     override suspend fun getGalleryVideos(): DataResult<List<GalleryVideo>> =
