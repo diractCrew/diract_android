@@ -61,14 +61,15 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPartList"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:clipToPadding="false"
         android:orientation="vertical"
         android:paddingHorizontal="16dp"
         android:paddingVertical="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/actionContainer"
+        app:layout_constraintBottom_toBottomOf="@+id/actionContainer"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
 
@@ -78,6 +79,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/bg_action_container"
         android:padding="16dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <com.google.android.material.button.MaterialButton
