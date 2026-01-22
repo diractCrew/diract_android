@@ -1,5 +1,6 @@
 package com.baek.diract.presentation.home.video.upload
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.baek.diract.domain.common.DataResult
@@ -33,27 +34,22 @@ class UploadVideoViewModel @Inject constructor(
     val currentFilter: StateFlow<VideoFilter> = _currentFilter.asStateFlow()
 
     // 선택된 비디오
-    private val _selectedVideoId = MutableStateFlow<Long?>(null)
-    val selectedVideoId: StateFlow<Long?> = _selectedVideoId.asStateFlow()
+    private val _selectedVideo = MutableStateFlow<GalleryVideoItem?>(null)
+    val selectedVideo: StateFlow<GalleryVideoItem?> = _selectedVideo.asStateFlow()
 
     // 필터링된 비디오 목록
     val filteredVideos: StateFlow<List<GalleryVideoItem>> = combine(
         _allVideos,
         _currentFilter,
-        _selectedVideoId
-    ) { videos, filter,selectedId  ->
+        _selectedVideo
+    ) { videos, filter, selected ->
         val filtered = when (filter) {
             VideoFilter.ALL -> videos
             VideoFilter.FAVORITE -> videos.filter { it.isFavorite }
         }
-        filtered.map { it.toUiItem(it.id == selectedId) }
+        filtered.map { it.toUiItem(it.id == selected?.id) }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-
-
-    init {
-        loadGalleryVideos()
-    }
 
     // 갤러리 비디오 로드
     fun loadGalleryVideos() {
@@ -63,6 +59,7 @@ class UploadVideoViewModel @Inject constructor(
                 is DataResult.Success -> {
                     _allVideos.value = result.data
                     _galleryState.value = UiState.Success(Unit)
+                    Log.d("UploadVideoViewModel",result.data.toString())
                 }
 
                 is DataResult.Error -> {
@@ -81,13 +78,13 @@ class UploadVideoViewModel @Inject constructor(
     }
 
     // 비디오 선택
-    fun selectVideo(video: GalleryVideo) {
-        _selectedVideoId.value = video.id
+    fun selectVideo(video: GalleryVideoItem) {
+        _selectedVideo.value = video
     }
 
     // 업로드 가능 여부
-    fun canUpload(title: String): Boolean {
-        return _selectedVideoId.value != null && title.isNotBlank()
+    fun canUpload(title: String?): Boolean {
+        return _selectedVideo.value != null && (title?.isNotBlank() ?: false)
     }
 }
 
