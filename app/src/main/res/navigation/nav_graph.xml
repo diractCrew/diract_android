@@ -10,6 +10,9 @@
         android:name="com.baek.diract.presentation.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_projectListFragment"
+            app:destination="@id/projectListFragment" />
         <!--
             TODO: 추후 네비게이션 home에서 연결할 때 주석 제거
         <action

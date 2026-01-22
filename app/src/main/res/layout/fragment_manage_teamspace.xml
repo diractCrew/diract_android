@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.home.ManageTeamspaceFragment">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/menu_section_set_toolbar"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:subtitleCentered="true"
+        app:subtitleTextAppearance="@style/Caption1.Medium"
+        app:subtitleTextColor="@color/label_normal"
+        app:title="@string/teamspace_current_name"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/Heading1.Medium"
+        app:titleTextColor="@color/label_strong" />
+</androidx.constraintlayout.widget.ConstraintLayout>
