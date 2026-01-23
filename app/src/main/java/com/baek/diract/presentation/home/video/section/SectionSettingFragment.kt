@@ -125,7 +125,8 @@ class SectionSettingFragment : Fragment() {
         sectionItemAdapter = SectionItemAdapter(
             onItemLongClick = ::onItemLongClick,
             onEditDone = ::onEditDone,
-            onTextLengthChanged = ::onTextLengthChanged
+            onTextLengthChanged = ::onTextLengthChanged,
+            onError = ::showErrorToast
         )
 
         binding.rvPartList.apply {
@@ -136,17 +137,19 @@ class SectionSettingFragment : Fragment() {
 
     private fun onTextLengthChanged(length: Int) {
         binding.confirmBtn.isEnabled = length > 0
+        if (length < 10) {
+            hasShownMaxLengthToast = false
+        }
+    }
 
-        // 10자 이상일 때 토스트 한 번만 표시
-        if (length >= 10 && !hasShownMaxLengthToast) {
+    private fun showErrorToast() {
+        if (!hasShownMaxLengthToast) {
             hasShownMaxLengthToast = true
             CustomToast.showNegative(
                 requireContext(),
                 getString(R.string.toast_section_name_max_length, 10),
                 Toast.LENGTH_LONG
             )
-        } else if (length < 10) {
-            hasShownMaxLengthToast = false
         }
     }
 
@@ -229,7 +232,7 @@ class SectionSettingFragment : Fragment() {
                 context = requireContext(),
                 title = getString(R.string.dialog_discard_title),
                 message = getString(R.string.dialog_discard_message),
-                positiveText = getString(R.string.dialog_discard),
+                positiveText = getString(R.string.dialog_exit),
                 onPositive = {
                     viewModel.cancelEditing()
                 }
@@ -245,7 +248,7 @@ class SectionSettingFragment : Fragment() {
                 context = requireContext(),
                 title = getString(R.string.dialog_discard_title),
                 message = getString(R.string.dialog_discard_message),
-                positiveText = getString(R.string.dialog_discard),
+                positiveText = getString(R.string.dialog_exit),
                 onPositive = {
                     viewModel.cancelEditing()
                     findNavController().navigateUp()

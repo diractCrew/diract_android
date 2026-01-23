@@ -14,15 +14,18 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.baek.diract.R
 import com.baek.diract.databinding.ItemSectionBinding
+import com.baek.diract.presentation.common.MaxLengthInputFilter
 
 class SectionItemAdapter(
     private val onItemLongClick: (SectionItem, View) -> Unit,
     private val onEditDone: () -> Unit,
-    private val onTextLengthChanged: (Int) -> Unit
+    private val onTextLengthChanged: (Int) -> Unit,
+    private val onError: () -> Unit
 ) : ListAdapter<SectionItem, SectionItemAdapter.SectionViewHolder>(SectionDiffCallback()) {
 
     companion object {
         internal const val PAYLOAD_EDITING_CHANGED = "payload_editing_changed"
+        private const val MAX_LENGTH = 10
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SectionViewHolder {
@@ -92,7 +95,8 @@ class SectionItemAdapter(
                 // 강제로 키보드 올리기
                 binding.partEditTxt.postDelayed({
                     binding.partEditTxt.requestFocus()
-                    val imm = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    val imm =
+                        binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.showSoftInput(binding.partEditTxt, InputMethodManager.SHOW_IMPLICIT)
                 }, 100)
             }
@@ -101,6 +105,11 @@ class SectionItemAdapter(
         private fun setupEditMode(item: SectionItem) {
             // 기존 TextWatcher 제거
             textWatcher?.let { binding.partEditTxt.removeTextChangedListener(it) }
+
+            // maxLength 필터 적용
+            binding.partEditTxt.filters = arrayOf(MaxLengthInputFilter(MAX_LENGTH) {
+                showMaxLengthError()
+            })
 
             binding.partEditTxt.setText(item.name)
             binding.partEditTxt.setSelection(item.name.length)
@@ -136,6 +145,7 @@ class SectionItemAdapter(
             // 키보드 완료 버튼 클릭
             binding.partEditTxt.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    binding.partEditTxt.clearFocus()
                     onEditDone()
                     true
                 } else {
@@ -148,22 +158,32 @@ class SectionItemAdapter(
                 binding.partEditTxt.text?.clear()
             }
         }
-
-        private fun updateCharCount(length: Int) {
-            binding.countTxt.text = "$length/10"
-            val colorRes = when {
-                length >= 10 -> R.color.accent_red_normal
-                length == 0 -> R.color.label_assistive
-                else -> R.color.secondary_normal
-            }
-            binding.countTxt.setTextColor(ContextCompat.getColor(binding.root.context, colorRes))
-            binding.viewUnderline.setBackgroundColor(
-                ContextCompat.getColor(
-                    binding.root.context,
-                    colorRes
-                )
+        private fun showMaxLengthError() {
+            binding.countTxt.setTextColor(
+                ContextCompat.getColor(binding.root.context, R.color.accent_red_normal)
             )
+            binding.viewUnderline.setBackgroundColor(
+                ContextCompat.getColor(binding.root.context, R.color.accent_red_normal)
+            )
+            onError()
+        }
+        private fun updateCharCount(length: Int) {
+            binding.countTxt.text = "$length/$MAX_LENGTH"
+
+            if (length < MAX_LENGTH) {
+                restoreNormalState()
+            }
+
             onTextLengthChanged(length)
+        }
+
+        private fun restoreNormalState() {
+            binding.countTxt.setTextColor(
+                ContextCompat.getColor(binding.root.context, R.color.secondary_assistive)
+            )
+            binding.viewUnderline.setBackgroundColor(
+                ContextCompat.getColor(binding.root.context, R.color.secondary_assistive)
+            )
         }
     }
 
