@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import androidx.core.os.bundleOf
+import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import androidx.core.view.isVisible
@@ -28,26 +29,31 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
  *
  * 사용 예시:
  * ```
- * val dialog =InputDialogFragment.newInstance(
+ * val dialog = InputDialogFragment.newInstance(
  *     title = "새 프로젝트 만들기",
  *     description = "프로젝트 이름을 입력하세요.",
  *     hint = "(예시) 대동제",
  *     buttonText = "새 프로젝트 만들기",
  *     maxLength = 20
  * ).apply {
+ *     setFragmentManager(parentFragmentManager)
  *     onConfirm = { inputText ->
+ *
  *         // 확인 버튼 클릭 시 처리
  *     }
  * }
  *
- * //처음에 띄울때
- * dialog.show(parentFragmentManager, InputDialogFragment.TAG)
+ * // 다이얼로그 표시
+ * dialog.show()
  *
- * //로딩상태일때
+ * //로딩중일떼
  * dialog.showLoading()
  *
- * //완료되었을때
+ * // 완료되었을 때
  * dialog.showComplete()
+ *
+ * //에러가 나서 다시 기본 화면 보여줄때
+ * dialog.showDefault()
  * ```
  */
 class InputDialogFragment : BottomSheetDialogFragment() {
@@ -56,10 +62,24 @@ class InputDialogFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     var onConfirm: ((String) -> Unit)? = null
 
+    private var fragmentManager: FragmentManager? = null
+
     private val maxLength: Int
         get() = arguments?.getInt(ARG_MAX_LENGTH, DEFAULT_MAX_LENGTH) ?: DEFAULT_MAX_LENGTH
 
     private var isError = false
+
+    // FragmentManager 설정
+    fun setFragmentManager(fm: FragmentManager): InputDialogFragment {
+        this.fragmentManager = fm
+        return this
+    }
+
+    //다이얼로그 표시 (setFragmentManager 호출 후 사용)
+    fun show() {
+        fragmentManager?.let { show(it, TAG) }
+            ?: throw IllegalStateException("FragmentManager가 설정되지 않았습니다. setFragmentManager()를 먼저 호출하세요.")
+    }
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -138,7 +158,7 @@ class InputDialogFragment : BottomSheetDialogFragment() {
         binding.inputTxt.setSelection(binding.inputTxt.text?.length ?: 0)
 
         // 초기 상태 설정
-        showDefaultView()
+        showDefault()
         updateButtonState(initialText)
         updateClearButtonVisibility(initialText)
         updateCounter(initialText.length)
@@ -178,7 +198,7 @@ class InputDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun showDefaultView() {
+    fun showDefault() {
         binding.confirmBtn.visibility = View.VISIBLE
         binding.loadingView.visibility = View.GONE
         binding.completeView.visibility = View.GONE
@@ -310,7 +330,7 @@ class InputDialogFragment : BottomSheetDialogFragment() {
 
         fun newInstance(
             title: String,
-            description: String,
+            description: String = "",
             hint: String? = null,
             initialText: String = "",
             buttonText: String? = null,
