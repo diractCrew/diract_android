@@ -17,7 +17,7 @@ import com.baek.diract.presentation.common.Formatter.toTimeString
 
 class VideoCardAdapter(
     private val onItemClick: (VideoSummary) -> Unit,
-    private val onMoreClick: (VideoSummary) -> Unit,
+    private val onMoreClick: (VideoSummary, View) -> Unit,
     private val onCancelClick: (VideoCardItem.Failed) -> Unit = {},
     private val onRetryClick: (VideoCardItem.Failed) -> Unit = {}
 ) : ListAdapter<VideoCardItem, VideoCardAdapter.VideoCardViewHolder>(VideoCardDiffCallback()) {
@@ -92,7 +92,7 @@ class VideoCardAdapter(
                 .into(binding.thumbnailImg)
 
             binding.root.setOnClickListener { onItemClick(data) }
-            binding.btnMore.setOnClickListener { onMoreClick(data) }
+            binding.btnMore.setOnClickListener { view -> onMoreClick(data, view) }
         }
 
         private fun bindCompressing(item: VideoCardItem.Compressing) {
