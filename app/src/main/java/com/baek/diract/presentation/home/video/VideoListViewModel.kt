@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.baek.diract.domain.common.DataResult
 import com.baek.diract.domain.model.Section
+import com.baek.diract.domain.model.VideoSummary
 import com.baek.diract.domain.repository.AuthRepository
 import com.baek.diract.domain.repository.VideoRepository
 import com.baek.diract.domain.usecase.UploadVideoUseCase
@@ -66,6 +67,10 @@ class VideoListViewModel @Inject constructor(
     //로딩, 성공 실패 관리(로딩 상태 변화 관측을 위한 System.currentTimeMillis() 값 넣음)
     private val _uiState = MutableStateFlow<UiState<Long>>(UiState.None)
     val uiState: StateFlow<UiState<Long>> = _uiState.asStateFlow()
+
+    //이름 수정 관리
+    private val _editUiState = MutableStateFlow<UiState<Long>>(UiState.None)
+    val editUiState: StateFlow<UiState<Long>> = _editUiState.asStateFlow()
 
     // 현재 비디오 리스트 가져오기
     private fun getCurrentVideoList(): List<VideoCardItem> {
@@ -405,6 +410,41 @@ class VideoListViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun getVideoType(item: VideoSummary): VideoType {
+        val isUploader = item.uploaderId == authRepository.getCurrentUser()?.uid
+        val hasNoPart = _sections.value.size <= 1
+        return when {
+            !isUploader -> VideoType.OTHER_USER_VIDEO
+            hasNoPart -> VideoType.MY_VIDEO_NO_PART
+            else -> VideoType.MY_VIDEO_DEFAULT
+        }
+    }
+
+    //------ 비디오 이름 수정 ------
+
+    fun editVideoName(videoId: String, newName: String) {
+        viewModelScope.launch {
+            _editUiState.value = UiState.Loading
+
+            when (val result = videoRepository.editVideoTitle(videoId, newName)) {
+                is DataResult.Success -> {
+                    _editUiState.value = UiState.Success(System.currentTimeMillis())
+                    refresh()
+                }
+                is DataResult.Error -> {
+                    _editUiState.value = UiState.Error(
+                        message = result.throwable.message,
+                        throwable = result.throwable
+                    )
+                }
+            }
+        }
+    }
+
+    fun resetEditUiState() {
+        _editUiState.value = UiState.None
     }
 
     companion object {
