@@ -98,12 +98,11 @@ class VideoListFragment : Fragment() {
             hint = getString(R.string.dialog_video_name_hint),
             maxLength = 20
         ).apply {
-            setFragmentManager(parentFragmentManager)
             onConfirm = { newName ->
                 viewModel.editVideoName(video.id, newName)
             }
         }
-        editNameDialog?.show()
+        editNameDialog?.show(parentFragmentManager, InputDialogFragment.TAG)
     }
 
     private fun startVideoUploadFlow() {
@@ -223,7 +222,7 @@ class VideoListFragment : Fragment() {
 
                             is UiState.Success -> {
                                 editNameDialog?.showComplete()
-                                delay(1000)
+                                delay(800)
                                 editNameDialog?.dismiss()
                                 viewModel.resetEditUiState()
                             }

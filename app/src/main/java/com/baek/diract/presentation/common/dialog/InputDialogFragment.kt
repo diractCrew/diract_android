@@ -36,7 +36,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
  *     buttonText = "새 프로젝트 만들기",
  *     maxLength = 20
  * ).apply {
- *     setFragmentManager(parentFragmentManager)
  *     onConfirm = { inputText ->
  *
  *         // 확인 버튼 클릭 시 처리
@@ -52,7 +51,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
  * // 완료되었을 때
  * dialog.showComplete()
  *
- * //에러가 나서 다시 기본 화면 보여줄때
+ * //다시 기본 화면 보여줄때
  * dialog.showDefault()
  * ```
  */
@@ -62,18 +61,10 @@ class InputDialogFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     var onConfirm: ((String) -> Unit)? = null
 
-    private var fragmentManager: FragmentManager? = null
-
     private val maxLength: Int
         get() = arguments?.getInt(ARG_MAX_LENGTH, DEFAULT_MAX_LENGTH) ?: DEFAULT_MAX_LENGTH
 
     private var isError = false
-
-    // FragmentManager 설정
-    fun setFragmentManager(fm: FragmentManager): InputDialogFragment {
-        this.fragmentManager = fm
-        return this
-    }
 
     //다이얼로그 표시 (setFragmentManager 호출 후 사용)
     fun show() {
