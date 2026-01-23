@@ -132,19 +132,13 @@ class UploadVideoFragment : BottomSheetDialogFragment() {
     }
 
     private fun initView() {
-        binding.toolbar.subtitle = args.tracksTitle
-        binding.toolbar.setNavigationOnClickListener {
+        binding.subTitleTxt.text = args.tracksTitle
+        binding.closeBtn.setOnClickListener {
             findNavController().navigateUp()
         }
-        binding.toolbar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.action_upload -> {
-                    handleUpload()
-                    true
-                }
 
-                else -> false
-            }
+        binding.uploadBtn.setOnClickListener {
+            handleUpload()
         }
 
         // 필터 탭 리스너
@@ -214,7 +208,7 @@ class UploadVideoFragment : BottomSheetDialogFragment() {
     }
 
     private fun updateView(item: GalleryVideoItem?) {
-        binding.toolbar.menu.findItem(R.id.action_upload).isEnabled = item != null
+        binding.uploadBtn.isEnabled = item != null
         binding.titleInputTxt.isEnabled = item != null
         binding.titleInputTxt.hint =
             getString(if (item == null) R.string.upload_video_hint_disabled else R.string.upload_video_hint_enabled)

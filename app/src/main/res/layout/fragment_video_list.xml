@@ -19,15 +19,47 @@
             android:orientation="vertical"
             app:layout_scrollFlags="scroll|enterAlways|snap">
 
-            <!-- Toolbar -->
-            <com.google.android.material.appbar.MaterialToolbar
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/topBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:menu="@menu/menu_video_list_toolbar"
-                app:navigationIcon="@drawable/ic_arrow_back"
-                app:titleTextAppearance="@style/Heading1.Medium"
-                app:titleTextColor="@color/label_strong" />
+                android:paddingVertical="8dp"
+                android:paddingEnd="12dp">
+
+                <ImageButton
+                    android:id="@+id/backBtn"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_arrow_back"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <TextView
+                    android:id="@+id/titleTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textAppearance="@style/Heading1.Medium"
+                    android:textColor="@color/label_strong"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/backBtn"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/uploadBtn"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_upload"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <!-- 섹션 선택 리스트 -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvSections"
@@ -99,7 +131,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
