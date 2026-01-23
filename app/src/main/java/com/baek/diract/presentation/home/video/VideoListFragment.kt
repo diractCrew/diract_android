@@ -24,7 +24,11 @@ import com.baek.diract.databinding.FragmentVideoListBinding
 import com.baek.diract.domain.model.VideoSummary
 import com.baek.diract.presentation.common.recyclerview.SpacingItemDecoration
 import com.baek.diract.presentation.common.UiState
+import com.baek.diract.presentation.common.dialog.InputDialogFragment
+import com.baek.diract.presentation.common.option.OptionItem
+import com.baek.diract.presentation.common.option.OptionPopup
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -36,6 +40,8 @@ class VideoListFragment : Fragment() {
 
     private lateinit var videoCardAdapter: VideoCardAdapter
     private lateinit var sectionChipAdapter: SectionChipAdapter
+
+    private var editNameDialog: InputDialogFragment? = null
 
     private var statusBarHeight = 0
 
@@ -81,6 +87,23 @@ class VideoListFragment : Fragment() {
         }
 
         applyStatusBarInsetsToToolbar()
+    }
+
+    private fun showEditNameDialog(video: VideoSummary) {
+        viewModel.resetEditUiState()
+
+        editNameDialog = InputDialogFragment.newInstance(
+            title = getString(R.string.dialog_video_name_title),
+            initialText = video.title,
+            hint = getString(R.string.dialog_video_name_hint),
+            maxLength = 20
+        ).apply {
+            setFragmentManager(parentFragmentManager)
+            onConfirm = { newName ->
+                viewModel.editVideoName(video.id, newName)
+            }
+        }
+        editNameDialog?.show()
     }
 
     private fun startVideoUploadFlow() {
@@ -186,6 +209,36 @@ class VideoListFragment : Fragment() {
                         }
                     }
                 }
+                // 이름 수정 상태 관찰
+                launch {
+                    viewModel.editUiState.collect { state ->
+                        when (state) {
+                            is UiState.None -> {
+                                editNameDialog?.showDefault()
+                            }
+
+                            is UiState.Loading -> {
+                                editNameDialog?.showLoading()
+                            }
+
+                            is UiState.Success -> {
+                                editNameDialog?.showComplete()
+                                delay(1000)
+                                editNameDialog?.dismiss()
+                                viewModel.resetEditUiState()
+                            }
+
+                            is UiState.Error -> {
+                                Toast.makeText(
+                                    requireContext(),
+                                    state.message ?: "수정에 실패했습니다.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                viewModel.resetEditUiState()
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -213,8 +266,55 @@ class VideoListFragment : Fragment() {
     }
 
     // 더보기 버튼 클릭
-    private fun onVideoMoreClick(video: VideoSummary) {
-        Toast.makeText(requireContext(), "더보기: ${video.title}", Toast.LENGTH_SHORT).show()
+    private fun onVideoMoreClick(video: VideoSummary, anchor: View) {
+        when (viewModel.getVideoType(video)) {
+            VideoType.OTHER_USER_VIDEO -> {
+                OptionPopup
+                    .reportOptions(requireContext()) { option ->
+                        handleVideoOption(option, video)
+                    }
+                    .show(anchor)
+            }
+
+            VideoType.MY_VIDEO_DEFAULT -> {
+                OptionPopup
+                    .videoOptions(requireContext()) { option ->
+                        handleVideoOption(option, video)
+                    }
+                    .show(anchor)
+            }
+
+            VideoType.MY_VIDEO_NO_PART -> {
+                OptionPopup
+                    .basicOptions(requireContext()) { option ->
+                        handleVideoOption(option, video)
+                    }
+                    .show(anchor)
+            }
+        }
+    }
+
+    private fun handleVideoOption(option: OptionItem, video: VideoSummary) {
+        when (option.id) {
+            OptionItem.ID_EDIT_NAME -> {
+                showEditNameDialog(video)
+            }
+
+            OptionItem.ID_MOVE -> {
+                // TODO: 다른 파트로 이동
+                Toast.makeText(requireContext(), "파트 이동: ${video.title}", Toast.LENGTH_SHORT).show()
+            }
+
+            OptionItem.ID_DELETE -> {
+                // TODO: 삭제 확인 다이얼로그 표시
+                Toast.makeText(requireContext(), "삭제: ${video.title}", Toast.LENGTH_SHORT).show()
+            }
+
+            OptionItem.ID_REPORT -> {
+                // TODO: 신고 처리
+                Toast.makeText(requireContext(), "신고: ${video.title}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     // 실패 아이템 취소 버튼 클릭
