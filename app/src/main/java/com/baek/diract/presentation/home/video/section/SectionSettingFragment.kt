@@ -60,19 +60,12 @@ class SectionSettingFragment : Fragment() {
     }
 
     private fun initView() {
-        binding.toolbar.subtitle = viewModel.trackTitle ?: ""
-        binding.toolbar.setNavigationOnClickListener {
+        binding.subTitleTxt.text = viewModel.trackTitle ?: ""
+        binding.backBtn.setOnClickListener {
             handleOnClickBackBtn()
         }
-        binding.toolbar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.action_add -> {
-                    viewModel.startAddSection()
-                    true
-                }
-
-                else -> false
-            }
+        binding.addBtn.setOnClickListener {
+            viewModel.startAddSection()
         }
 
         binding.addPartBtn.setOnClickListener {
@@ -172,7 +165,7 @@ class SectionSettingFragment : Fragment() {
                 }
                 launch {
                     viewModel.editingItem.collect { item ->
-                        binding.toolbar.menu.findItem(R.id.action_add).isEnabled = item == null
+                        binding.addBtn.isEnabled = item == null
                         binding.actionContainer.visibility =
                             if (item == null) View.GONE else View.VISIBLE
                     }

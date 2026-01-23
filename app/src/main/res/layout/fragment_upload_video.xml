@@ -8,6 +8,57 @@
     android:orientation="vertical"
     tools:context=".presentation.home.video.upload.UploadVideoFragment">
 
+    <!-- 툴바 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="4dp"
+        android:paddingVertical="8dp">
+
+        <ImageButton
+            android:id="@+id/closeBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_close" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/closeBtn"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/titleTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/upload_video_title"
+                android:textAppearance="@style/Heading1.Medium"
+                android:textColor="@color/label_strong" />
+
+            <TextView
+                android:id="@+id/subTitleTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/Caption1.Medium"
+                android:textColor="@color/label_normal" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/uploadBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_arrow_upward_selector"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <!-- 스크롤 가능한 콘텐츠 영역 -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollView"
@@ -19,20 +70,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <!-- 툴바 -->
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:menu="@menu/menu_upload_video_toolbar"
-                app:navigationIcon="@drawable/ic_close"
-                app:subtitleTextAppearance="@style/Caption1.Medium"
-                app:subtitleTextColor="@color/label_normal"
-                app:title="@string/upload_video_title"
-                app:titleTextAppearance="@style/Heading1.Medium"
-                app:titleTextColor="@color/label_strong" />
-
             <!-- 비디오 미리보기 영역 -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -61,8 +98,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:visibility="gone"
-                        app:resize_mode="fit"
                         app:auto_show="false"
+                        app:resize_mode="fit"
                         app:show_buffering="when_playing"
                         app:use_controller="true" />
 
@@ -132,7 +169,7 @@
                         android:background="@null"
                         android:contentDescription="@string/clear"
                         android:paddingHorizontal="8dp"
-                        android:src="@drawable/ic_clear_button"
+                        android:src="@drawable/ic_cancel"
                         android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"

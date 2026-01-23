@@ -62,8 +62,9 @@ class VideoListFragment : Fragment() {
     }
 
     private fun initView() {
-        binding.topBar.title = viewModel.trackTitle
-        binding.topBar.setNavigationOnClickListener {
+        binding.titleTxt.text = viewModel.trackTitle
+
+        binding.backBtn.setOnClickListener {
             findNavController().navigateUp()
         }
 
@@ -75,15 +76,8 @@ class VideoListFragment : Fragment() {
             startVideoUploadFlow()
         }
 
-        binding.topBar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.action_add -> {
-                    startVideoUploadFlow()
-                    true
-                }
-
-                else -> false
-            }
+        binding.uploadBtn.setOnClickListener {
+            startVideoUploadFlow()
         }
 
         applyStatusBarInsetsToToolbar()
