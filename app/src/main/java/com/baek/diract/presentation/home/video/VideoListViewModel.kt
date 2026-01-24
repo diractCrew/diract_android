@@ -95,7 +95,6 @@ class VideoListViewModel @Inject constructor(
                     _sections.value = sections
 
                     val defaultSectionId = _selectedSectionId.value
-                        ?: sections.find { it.title == DEFAULT_SECTION_TITLE }?.id
                         ?: sections.firstOrNull()?.id
 
                     _selectedSectionId.value = defaultSectionId
@@ -451,6 +450,5 @@ class VideoListViewModel @Inject constructor(
         private const val TAG = "VideoListViewModel"
         private const val KEY_TRACK_ID = "tracksId"
         private const val KEY_TRACK_TITLE = "tracksTitle"
-        private const val DEFAULT_SECTION_TITLE = "일반"
     }
 }
