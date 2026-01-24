@@ -5,17 +5,22 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.baek.diract.R
 import com.baek.diract.domain.common.DataResult
 import com.baek.diract.domain.model.Section
 import com.baek.diract.domain.model.VideoSummary
 import com.baek.diract.domain.repository.AuthRepository
 import com.baek.diract.domain.repository.VideoRepository
 import com.baek.diract.domain.usecase.UploadVideoUseCase
+import com.baek.diract.presentation.common.ToastEvent
 import com.baek.diract.presentation.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -31,10 +36,10 @@ class VideoListViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    val trackId: String = checkNotNull(savedStateHandle[KEY_TRACK_ID]) {
+    val tracksId: String = checkNotNull(savedStateHandle[KEY_TRACK_ID]) {
         "trackId값 없이 VideoList 접근이 불가능합니다."
     }
-    val trackTitle: String = checkNotNull(savedStateHandle[KEY_TRACK_TITLE]) {
+    val tracksTitle: String = checkNotNull(savedStateHandle[KEY_TRACK_TITLE]) {
         "trackId값 없이 VideoList 접근이 불가능합니다."
     }
 
@@ -72,6 +77,9 @@ class VideoListViewModel @Inject constructor(
     private val _editUiState = MutableStateFlow<UiState<Long>>(UiState.None)
     val editUiState: StateFlow<UiState<Long>> = _editUiState.asStateFlow()
 
+    private val _toastMessage = MutableSharedFlow<ToastEvent>()
+    val toastMessage: SharedFlow<ToastEvent> = _toastMessage.asSharedFlow()
+
     // 현재 비디오 리스트 가져오기
     private fun getCurrentVideoList(): List<VideoCardItem> {
         return _videoItems.value
@@ -89,7 +97,7 @@ class VideoListViewModel @Inject constructor(
             _uiState.value = UiState.Loading
 
             // 1. 섹션 로드
-            when (val sectionsResult = videoRepository.getSections(trackId)) {
+            when (val sectionsResult = videoRepository.getSections(tracksId)) {
                 is DataResult.Success -> {
                     val sections = sectionsResult.data
                     _sections.value = sections
@@ -120,7 +128,7 @@ class VideoListViewModel @Inject constructor(
 
     // 특정 섹션의 비디오 로드
     private suspend fun loadVideosForSection(sectionId: String) {
-        when (val videosResult = videoRepository.getVideos(trackId, sectionId)) {
+        when (val videosResult = videoRepository.getVideos(tracksId, sectionId)) {
             is DataResult.Success -> {
                 val completedItems = videosResult.data.map { VideoCardItem.Completed(it) }
                 // 진행 중인 아이템 유지
@@ -164,7 +172,7 @@ class VideoListViewModel @Inject constructor(
                     uploadVideoUseCase(
                         videoUri = retryInfo.originalUri,
                         title = retryInfo.title,
-                        tracksId = trackId,
+                        tracksId = tracksId,
                         sectionId = selectedSectionId,
                         uploaderId = uploaderId,
                         onStateChanged = { state ->
@@ -186,7 +194,7 @@ class VideoListViewModel @Inject constructor(
                         thumbnailUri = thumbnailUri,
                         duration = duration,
                         title = retryInfo.title,
-                        tracksId = trackId,
+                        tracksId = tracksId,
                         sectionId = selectedSectionId,
                         uploaderId = uploaderId,
                         onStateChanged = { state ->
@@ -275,7 +283,7 @@ class VideoListViewModel @Inject constructor(
             val result = uploadVideoUseCase(
                 videoUri = videoUri,
                 title = title,
-                tracksId = trackId,
+                tracksId = tracksId,
                 sectionId = selectedSectionId,
                 uploaderId = uploaderId,
                 onStateChanged = { state ->
@@ -384,7 +392,7 @@ class VideoListViewModel @Inject constructor(
         updateVideoList { list -> list.filter { it.id != id } }
     }
 
-    // 새로고침
+    // 선택된 섹션에 대한 영상 리스트 새로고침
     fun refresh() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
@@ -438,6 +446,7 @@ class VideoListViewModel @Inject constructor(
                         message = result.throwable.message,
                         throwable = result.throwable
                     )
+                    _toastMessage.emit(ToastEvent(R.string.toast_failed_edit_video_title, true))
                 }
             }
         }
@@ -445,6 +454,24 @@ class VideoListViewModel @Inject constructor(
 
     fun resetEditUiState() {
         _editUiState.value = UiState.None
+    }
+
+    fun deleteVideo(video: VideoSummary) {
+        val sectionId = _selectedSectionId.value ?: return
+        viewModelScope.launch {
+            when (videoRepository.deleteVideo(tracksId, sectionId, video.trackId, video.id)) {
+
+                is DataResult.Success -> {
+                    _toastMessage.emit(ToastEvent(R.string.toast_delete_video, false))
+                    refresh()
+                }
+
+                is DataResult.Error -> {
+                    _toastMessage.emit(ToastEvent(R.string.toast_failed_delete_video, true))
+                }
+            }
+
+        }
     }
 
     companion object {
