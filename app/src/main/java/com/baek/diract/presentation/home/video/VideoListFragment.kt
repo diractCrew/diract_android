@@ -1,5 +1,6 @@
 package com.baek.diract.presentation.home.video
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,16 +11,24 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
+import com.baek.diract.presentation.home.video.upload.UploadVideoFragment
 import com.baek.diract.R
 import com.baek.diract.databinding.FragmentVideoListBinding
 import com.baek.diract.domain.model.VideoSummary
+import com.baek.diract.presentation.common.recyclerview.SpacingItemDecoration
 import com.baek.diract.presentation.common.UiState
+import com.baek.diract.presentation.common.dialog.InputDialogFragment
+import com.baek.diract.presentation.common.option.OptionItem
+import com.baek.diract.presentation.common.option.OptionPopup
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -31,6 +40,8 @@ class VideoListFragment : Fragment() {
 
     private lateinit var videoCardAdapter: VideoCardAdapter
     private lateinit var sectionChipAdapter: SectionChipAdapter
+
+    private var editNameDialog: InputDialogFragment? = null
 
     private var statusBarHeight = 0
 
@@ -44,22 +55,64 @@ class VideoListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.refreshAll()
         initView()
         initAdapter()
         observeViewModel()
     }
 
     private fun initView() {
-        binding.topBar.title = viewModel.trackTitle ?: ""
-        binding.topBar.setNavigationOnClickListener {
+        binding.titleTxt.text = viewModel.trackTitle
+
+        binding.backBtn.setOnClickListener {
             findNavController().navigateUp()
         }
 
         binding.swipeRefreshLayoutList.setOnRefreshListener {
-            viewModel.refresh()
+            viewModel.refreshAll()
+        }
+
+        binding.addVideoBtn.setOnClickListener {
+            startVideoUploadFlow()
+        }
+
+        binding.uploadBtn.setOnClickListener {
+            startVideoUploadFlow()
         }
 
         applyStatusBarInsetsToToolbar()
+    }
+
+    private fun showEditNameDialog(video: VideoSummary) {
+        viewModel.resetEditUiState()
+
+        editNameDialog = InputDialogFragment.newInstance(
+            title = getString(R.string.dialog_video_name_title),
+            initialText = video.title,
+            hint = getString(R.string.dialog_video_name_hint),
+            maxLength = 20
+        ).apply {
+            onConfirm = { newName ->
+                viewModel.editVideoName(video.id, newName)
+            }
+        }
+        editNameDialog?.show(parentFragmentManager, InputDialogFragment.TAG)
+    }
+
+    private fun startVideoUploadFlow() {
+        val action = VideoListFragmentDirections.actionVideoListFragmentToUploadVideoFragment(
+            viewModel.trackTitle
+        )
+        findNavController().navigate(action)
+
+        setFragmentResultListener(UploadVideoFragment.REQUEST_KEY) { _, bundle ->
+            val videoUri =
+                bundle.getString(UploadVideoFragment.RESULT_VIDEO_URI)?.let { Uri.parse(it) }
+            val videoTitle = bundle.getString(UploadVideoFragment.RESULT_VIDEO_TITLE)
+            if (videoUri != null && videoTitle != null) {
+                viewModel.uploadVideo(videoUri, videoTitle)
+            }
+        }
     }
 
     private fun applyStatusBarInsetsToToolbar() {
@@ -88,7 +141,12 @@ class VideoListFragment : Fragment() {
         //아이템 간격 설정
         binding.rvSections.apply {
             adapter = sectionChipAdapter
-            addItemDecoration(SectionChipItemDecoration(resources.getDimensionPixelSize(R.dimen.section_chip_spacing)))
+            addItemDecoration(
+                SpacingItemDecoration(
+                    resources.getDimensionPixelSize(R.dimen.section_chip_spacing),
+                    RecyclerView.HORIZONTAL
+                )
+            )
         }
 
         videoCardAdapter = VideoCardAdapter(
@@ -144,9 +202,40 @@ class VideoListFragment : Fragment() {
                         }
                     }
                 }
+                // 이름 수정 상태 관찰
+                launch {
+                    viewModel.editUiState.collect { state ->
+                        when (state) {
+                            is UiState.None -> {
+                                editNameDialog?.showDefault()
+                            }
+
+                            is UiState.Loading -> {
+                                editNameDialog?.showLoading()
+                            }
+
+                            is UiState.Success -> {
+                                editNameDialog?.showComplete()
+                                delay(800)
+                                editNameDialog?.dismiss()
+                                viewModel.resetEditUiState()
+                            }
+
+                            is UiState.Error -> {
+                                Toast.makeText(
+                                    requireContext(),
+                                    state.message ?: "수정에 실패했습니다.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                viewModel.resetEditUiState()
+                            }
+                        }
+                    }
+                }
             }
         }
     }
+
     //데이터 불러오기 에러 시
     private fun showError() {
         binding.errorView.visibility = View.VISIBLE
@@ -170,9 +259,55 @@ class VideoListFragment : Fragment() {
     }
 
     // 더보기 버튼 클릭
-    private fun onVideoMoreClick(video: VideoSummary) {
-        Toast.makeText(requireContext(), "더보기: ${video.title}", Toast.LENGTH_SHORT).show()
-        // TODO: 더보기 메뉴 표시 (편집, 삭제 등)
+    private fun onVideoMoreClick(video: VideoSummary, anchor: View) {
+        when (viewModel.getVideoType(video)) {
+            VideoType.OTHER_USER_VIDEO -> {
+                OptionPopup
+                    .reportOptions(requireContext()) { option ->
+                        handleVideoOption(option, video)
+                    }
+                    .show(anchor)
+            }
+
+            VideoType.MY_VIDEO_DEFAULT -> {
+                OptionPopup
+                    .videoOptions(requireContext()) { option ->
+                        handleVideoOption(option, video)
+                    }
+                    .show(anchor)
+            }
+
+            VideoType.MY_VIDEO_NO_PART -> {
+                OptionPopup
+                    .basicOptions(requireContext()) { option ->
+                        handleVideoOption(option, video)
+                    }
+                    .show(anchor)
+            }
+        }
+    }
+
+    private fun handleVideoOption(option: OptionItem, video: VideoSummary) {
+        when (option.id) {
+            OptionItem.ID_EDIT_NAME -> {
+                showEditNameDialog(video)
+            }
+
+            OptionItem.ID_MOVE -> {
+                // TODO: 다른 파트로 이동
+                Toast.makeText(requireContext(), "파트 이동: ${video.title}", Toast.LENGTH_SHORT).show()
+            }
+
+            OptionItem.ID_DELETE -> {
+                // TODO: 삭제 확인 다이얼로그 표시
+                Toast.makeText(requireContext(), "삭제: ${video.title}", Toast.LENGTH_SHORT).show()
+            }
+
+            OptionItem.ID_REPORT -> {
+                // TODO: 신고 처리
+                Toast.makeText(requireContext(), "신고: ${video.title}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     // 실패 아이템 취소 버튼 클릭
@@ -187,8 +322,11 @@ class VideoListFragment : Fragment() {
 
     // 섹션 설정 버튼 클릭
     private fun onSetSectionClick() {
-        Toast.makeText(requireContext(), "섹션 설정", Toast.LENGTH_SHORT).show()
-        // TODO: 섹션 추가 다이얼로그 표시
+        val action = VideoListFragmentDirections.actionVideoListFragmentToSectionSettingFragment(
+            viewModel.trackId,
+            viewModel.trackTitle
+        )
+        findNavController().navigate(action)
     }
 
     // 섹션 칩 클릭

@@ -13,10 +13,11 @@ import com.baek.diract.R
 import com.baek.diract.databinding.ItemVideoCardBinding
 import com.baek.diract.domain.model.VideoSummary
 import com.baek.diract.presentation.common.Formatter.toUiString
+import com.baek.diract.presentation.common.Formatter.toTimeString
 
 class VideoCardAdapter(
     private val onItemClick: (VideoSummary) -> Unit,
-    private val onMoreClick: (VideoSummary) -> Unit,
+    private val onMoreClick: (VideoSummary, View) -> Unit,
     private val onCancelClick: (VideoCardItem.Failed) -> Unit = {},
     private val onRetryClick: (VideoCardItem.Failed) -> Unit = {}
 ) : ListAdapter<VideoCardItem, VideoCardAdapter.VideoCardViewHolder>(VideoCardDiffCallback()) {
@@ -48,32 +49,32 @@ class VideoCardAdapter(
                 is VideoCardItem.Failed -> bindFailed(item)
             }
         }
-
-        /** emptyInfoContainer의 깜박이는 애니메이션 시작 */
-        private fun startShimmerAnimation() {
-            stopShimmerAnimation()
-            shimmerAnimator = ObjectAnimator.ofFloat(
-                binding.emptyInfoContainer,
-                View.ALPHA,
-                1f, 0.4f
-            ).apply {
-                duration = 800
-                repeatMode = ValueAnimator.REVERSE
-                repeatCount = ValueAnimator.INFINITE
-                start()
-            }
-        }
-
-        /** 깜박이는 애니메이션 중지 */
-        private fun stopShimmerAnimation() {
-            shimmerAnimator?.cancel()
-            shimmerAnimator = null
-            binding.emptyInfoContainer.alpha = 1f
-        }
+//
+//        /** emptyInfoContainer의 깜박이는 애니메이션 시작 */
+//        private fun startShimmerAnimation() {
+//            stopShimmerAnimation()
+//            shimmerAnimator = ObjectAnimator.ofFloat(
+//                binding.emptyInfoContainer,
+//                View.ALPHA,
+//                1f, 0.4f
+//            ).apply {
+//                duration = 800
+//                repeatMode = ValueAnimator.REVERSE
+//                repeatCount = ValueAnimator.INFINITE
+//                start()
+//            }
+//        }
+//
+//        /** 깜박이는 애니메이션 중지 */
+//        private fun stopShimmerAnimation() {
+//            shimmerAnimator?.cancel()
+//            shimmerAnimator = null
+//            binding.emptyInfoContainer.alpha = 1f
+//        }
 
         //기본 UI
         private fun bindCompleted(data: VideoSummary) {
-            stopShimmerAnimation()
+            //stopShimmerAnimation()
 
             binding.thumbnailImg.visibility = View.VISIBLE
             binding.btnMore.visibility = View.VISIBLE
@@ -83,7 +84,7 @@ class VideoCardAdapter(
             binding.failedInfoContainer.visibility = View.GONE
 
             binding.videoTitleTxt.text = data.title
-            binding.videoDurationTxt.text = data.duration.toUiString()
+            binding.videoDurationTxt.text = data.duration.toTimeString()
             binding.dateTxt.text = data.createdAt.toUiString()
 
             Glide.with(binding.thumbnailImg)
@@ -91,7 +92,7 @@ class VideoCardAdapter(
                 .into(binding.thumbnailImg)
 
             binding.root.setOnClickListener { onItemClick(data) }
-            binding.btnMore.setOnClickListener { onMoreClick(data) }
+            binding.btnMore.setOnClickListener { view -> onMoreClick(data, view) }
         }
 
         private fun bindCompressing(item: VideoCardItem.Compressing) {
@@ -112,7 +113,7 @@ class VideoCardAdapter(
             binding.stateText.visibility = View.VISIBLE
             binding.stateText.text = itemView.context.getString(R.string.compressing)
 
-            startShimmerAnimation()
+            //startShimmerAnimation()
 
             binding.root.setOnClickListener(null)
             binding.root.isClickable = false
@@ -135,14 +136,14 @@ class VideoCardAdapter(
             binding.stateText.text =
                 itemView.context.getString(R.string.upload_progress, item.progress)
 
-            startShimmerAnimation()
+            //startShimmerAnimation()
 
             binding.root.setOnClickListener(null)
             binding.root.isClickable = false
         }
 
         private fun bindFailed(item: VideoCardItem.Failed) {
-            stopShimmerAnimation()
+            //stopShimmerAnimation()
 
             // 오버레이 표시, 실패 하단
             binding.thumbnailImg.visibility = View.GONE

@@ -23,7 +23,7 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_check_circle"
+        android:src="@drawable/ic_check_circle_filled"
         android:visibility="gone" />
 
     <TextView

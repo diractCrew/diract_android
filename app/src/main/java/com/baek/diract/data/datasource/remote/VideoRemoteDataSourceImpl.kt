@@ -1,6 +1,7 @@
 package com.baek.diract.data.datasource.remote
 
 import android.net.Uri
+import android.util.Log
 import com.baek.diract.data.dto.SectionDto
 import com.baek.diract.data.dto.VideoDto
 import com.baek.diract.data.dto.VideoWithTrackDto
@@ -20,6 +21,7 @@ class VideoRemoteDataSourceImpl @Inject constructor(
             .collection("tracks")
             .document(tracksId)
             .collection("section")
+            .orderBy("created_at")
             .get()
             .await()
 
@@ -48,7 +50,7 @@ class VideoRemoteDataSourceImpl @Inject constructor(
         }
 
         // video 컬렉션에서 비디오 정보 조회
-        return videoIds.mapNotNull { (trackId, videoId) ->
+        val videos =  videoIds.mapNotNull { (trackId, videoId) ->
             val videoDoc = firestore
                 .collection("video")
                 .document(videoId)
@@ -62,12 +64,14 @@ class VideoRemoteDataSourceImpl @Inject constructor(
                 )
             }
         }
+        return videos.sortedBy { it.video.created_at }
     }
 
     override suspend fun addVideo(
         tracksId: String,
         sectionId: String,
         videoUri: Uri,
+        thumbnailUri: Uri,
         title: String,
         duration: Double,
         uploaderId: String,
@@ -78,35 +82,50 @@ class VideoRemoteDataSourceImpl @Inject constructor(
         val videoId = videoRef.id
         val now = Timestamp.now()
 
-        // 2. Storage에 비디오 업로드 (진행률 콜백 포함)
-        val videoStorageRef = storage.reference.child("video/$videoId")
-        val uploadTask = videoStorageRef.putFile(videoUri)
+        // 2. 비디오 업로드 (진행률: 0~90%)
+        val videoStorageRef = storage.reference.child("video/$videoId/$videoId.video.mov")
+        val videoUploadTask = videoStorageRef.putFile(videoUri)
 
-        // 업로드 진행률 리스너
         if (onProgress != null) {
-            uploadTask.addOnProgressListener { snapshot ->
-                val progress = ((snapshot.bytesTransferred * 100) / snapshot.totalByteCount).toInt()
-                onProgress(progress)
+            videoUploadTask.addOnProgressListener { snapshot ->
+                val videoProgress =
+                    ((snapshot.bytesTransferred * 90) / snapshot.totalByteCount).toInt()
+                onProgress(videoProgress)
             }
         }
 
-        uploadTask.await()
+        videoUploadTask.await()
         val videoUrl = videoStorageRef.downloadUrl.await().toString()
 
-        // 3. video 문서 저장
+        // 3. Custom bucket Storage에 썸네일 업로드 (진행률: 90~100%)
+        val thumbnailStorageRef = storage.reference.child("video/$videoId/$videoId.jpg")
+        val thumbnailUploadTask = thumbnailStorageRef.putFile(thumbnailUri)
+
+        if (onProgress != null) {
+            thumbnailUploadTask.addOnProgressListener { snapshot ->
+                val thumbnailProgress =
+                    90 + ((snapshot.bytesTransferred * 10) / snapshot.totalByteCount).toInt()
+                onProgress(thumbnailProgress)
+            }
+        }
+
+        thumbnailUploadTask.await()
+        val thumbnailUrl = thumbnailStorageRef.downloadUrl.await().toString()
+
+        // 4. video 문서 저장
         val videoData = hashMapOf(
             "video_id" to videoId,
             "video_title" to title,
             "video_duration" to duration,
             "video_url" to videoUrl,
-            "thumbnail_url" to "",
+            "thumbnail_url" to thumbnailUrl,
             "uploader_id" to uploaderId,
             "created_at" to now,
             "updated_at" to now
         )
         videoRef.set(videoData).await()
 
-        // 4. track 서브컬렉션에 참조 추가
+        // 5. track 서브컬렉션에 참조 추가
         val trackRef = firestore
             .collection("tracks")
             .document(tracksId)
@@ -116,6 +135,9 @@ class VideoRemoteDataSourceImpl @Inject constructor(
             .document()
 
         trackRef.set(mapOf("video_id" to videoId)).await()
+
+        // 완료 시 100% 콜백
+        onProgress?.invoke(100)
     }
 
     override suspend fun editVideoTitle(videoId: String, editedTitle: String) {
@@ -181,12 +203,17 @@ class VideoRemoteDataSourceImpl @Inject constructor(
             .delete()
             .await()
 
-        // 2. Storage에서 비디오 파일 삭제
+        // 2. Custom bucket Storage에서 비디오/썸네일 파일 삭제
+        val folderRef = storage.reference.child("video/$videoId")
         try {
-            storage.reference.child("video/$videoId/video").delete().await()
-            storage.reference.child("video/$videoId/thumbnail").delete().await()
+            val listResult = folderRef.listAll().await()
+            listResult.items.forEach { fileRef ->
+                fileRef.delete().await()
+            }
+//            storage.reference.child("video/$videoId/$videoId.mov").delete().await()
+//            storage.reference.child("video/$videoId/$videoId.jpg").delete().await()
         } catch (e: Exception) {
-            // 스토리지 파일이 없을 수 있음
+            Log.e("deleteVideoFolder", "폴더 삭제 실패: video/$videoId", e)
         }
 
         // 3. video 컬렉션에서 문서 삭제
@@ -204,8 +231,10 @@ class VideoRemoteDataSourceImpl @Inject constructor(
             .collection("section")
             .document()
 
+        val sectionId = sectionRef.id
         val now = Timestamp.now()
         val sectionData = hashMapOf(
+            "section_id" to sectionId,
             "section_title" to title,
             "created_at" to now,
             "updated_at" to now
@@ -246,6 +275,7 @@ class VideoRemoteDataSourceImpl @Inject constructor(
     }
 
     override suspend fun deleteSection(tracksId: String, sectionId: String) {
+        //TODO: track 전부 삭제, track에 있는 문서의 video_id에 해당하는 video삭제, storage에서 video/video_id/* 삭제
         val sectionRef = firestore
             .collection("tracks")
             .document(tracksId)

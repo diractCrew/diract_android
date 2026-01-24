@@ -9,13 +9,13 @@
 
     <LinearLayout
         android:id="@+id/toolbar"
-        android:paddingStart="24dp"
-        android:paddingEnd="12dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingVertical="12dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="12dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -49,11 +49,10 @@
     <FrameLayout
         android:id="@+id/input_container"
         android:layout_width="0dp"
-        android:layout_marginHorizontal="16dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="32dp"
         android:background="@drawable/bg_input_default"
-        android:paddingVertical="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/descriptionTxt">
@@ -70,6 +69,7 @@
             android:imeOptions="actionDone"
             android:inputType="text"
             android:maxLines="1"
+            android:paddingVertical="16dp"
             android:textAppearance="@style/Headline2.Medium"
             android:textColor="@color/label_strong"
             android:textColorHint="@color/label_assistive" />
@@ -81,9 +81,9 @@
             android:layout_gravity="end|center_vertical"
             android:background="@null"
             android:contentDescription="@string/clear"
-            android:padding="8dp"
-            android:src="@drawable/ic_clear_button"
-            android:layout_marginEnd="8dp"/>
+            android:paddingEnd="8dp"
+            android:src="@drawable/ic_cancel"
+            android:visibility="gone" />
     </FrameLayout>
 
     <TextView
@@ -94,12 +94,12 @@
         android:gravity="center"
         android:textAppearance="@style/Headline2.Medium"
         android:textColor="@color/secondary_normal"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/input_container" />
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/actionContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -112,7 +112,57 @@
             style="@style/Widget.Diract.ActionButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-    </LinearLayout>
 
+        <FrameLayout
+            android:id="@+id/loadingView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Diract.ActionButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                app:indicatorColor="@color/secondary_normal"
+                app:indicatorSize="28dp"
+                app:trackColor="@android:color/transparent"
+                app:trackThickness="4dp" />
+        </FrameLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/completeView"
+            style="@style/Widget.Diract.ActionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/fill_normal"
+            android:enabled="false"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="14dp"
+            android:textAppearance="@style/Headline2.Semibold"
+            android:visibility="gone"
+            app:cornerRadius="15dp"
+            app:icon="@drawable/ic_check_circle_stroke"
+            app:iconGravity="textStart"
+            app:iconPadding="10dp"
+            app:iconTint="@color/secondary_normal" />
+    </FrameLayout>
+
+    <View
+        android:id="@+id/blockingView"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@android:color/transparent"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

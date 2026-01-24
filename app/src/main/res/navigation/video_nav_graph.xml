@@ -9,7 +9,7 @@
         android:id="@+id/videoListFragment"
         android:name="com.baek.diract.presentation.home.video.VideoListFragment"
         android:label="fragment_video_list"
-        tools:layout="@layout/fragment_video_list" >
+        tools:layout="@layout/fragment_video_list">
         <argument
             android:name="tracksId"
             app:argType="string" />
@@ -19,10 +19,30 @@
         <action
             android:id="@+id/action_videoListFragment_to_sectionSettingFragment"
             app:destination="@id/sectionSettingFragment" />
+        <action
+            android:id="@+id/action_videoListFragment_to_uploadVideoFragment"
+            app:destination="@id/uploadVideoFragment" />
     </fragment>
     <fragment
         android:id="@+id/sectionSettingFragment"
         android:name="com.baek.diract.presentation.home.video.section.SectionSettingFragment"
         android:label="fragment_section_setting"
-        tools:layout="@layout/fragment_section_setting" />
+        tools:layout="@layout/fragment_section_setting">
+        <argument
+            android:name="tracksId"
+            app:argType="string" />
+        <argument
+            android:name="tracksTitle"
+            app:argType="string" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/uploadVideoFragment"
+        android:name="com.baek.diract.presentation.home.video.upload.UploadVideoFragment"
+        android:label="fragment_upload_video"
+        tools:layout="@layout/fragment_upload_video">
+        <argument
+            android:name="tracksTitle"
+            app:argType="string" />
+    </dialog>
 </navigation>

@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?><!-- 옵션 메뉴 아이템 레이아웃 -->
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/optionText"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingHorizontal="12dp"
-    android:paddingVertical="8dp"
-    android:textAppearance="@style/Body1.Medium"
-    android:textColor="@color/label_strong" />
+    android:paddingVertical="16dp">
+
+    <TextView
+        android:id="@+id/optionText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/Body1.Medium"
+        android:textColor="@color/label_strong" />
+</FrameLayout>
+

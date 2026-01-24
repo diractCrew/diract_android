@@ -22,7 +22,7 @@ object FirebaseModule {
     @Provides
     @Singleton
     fun provideFirebaseStorage(): FirebaseStorage {
-        return FirebaseStorage.getInstance()
+        return FirebaseStorage.getInstance("gs://dancemachine-5243b.firebasestorage.app")
     }
 
     @Provides

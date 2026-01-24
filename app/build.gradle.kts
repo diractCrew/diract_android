@@ -80,8 +80,10 @@ dependencies {
     implementation(libs.glide)
     ksp(libs.glide.ksp)
 
-    //media3 transformer
+    //media3
     implementation(libs.media3.transformer)
     implementation(libs.media3.effect)
     implementation(libs.media3.common)
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.ui)
 }

@@ -2,11 +2,8 @@ package com.baek.diract.presentation.common.dialog
 
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.Log
 import android.view.KeyEvent
@@ -17,15 +14,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
-import android.window.OnBackInvokedDispatcher
-import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
+import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import androidx.core.view.isVisible
 import com.baek.diract.R
 import com.baek.diract.databinding.FragmentInputDialogBinding
-import com.baek.diract.presentation.common.LoadingOverlay
+import com.baek.diract.presentation.common.MaxLengthInputFilter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 /**
@@ -33,7 +29,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
  *
  * 사용 예시:
  * ```
- * InputDialogFragment.newInstance(
+ * val dialog = InputDialogFragment.newInstance(
  *     title = "새 프로젝트 만들기",
  *     description = "프로젝트 이름을 입력하세요.",
  *     hint = "(예시) 대동제",
@@ -41,22 +37,40 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
  *     maxLength = 20
  * ).apply {
  *     onConfirm = { inputText ->
+ *
  *         // 확인 버튼 클릭 시 처리
  *     }
- * }.show(parentFragmentManager, InputDialogFragment.TAG)
+ * }
+ *
+ * // 다이얼로그 표시
+ * dialog.show()
+ *
+ * //로딩중일떼
+ * dialog.showLoading()
+ *
+ * // 완료되었을 때
+ * dialog.showComplete()
+ *
+ * //다시 기본 화면 보여줄때
+ * dialog.showDefault()
  * ```
  */
 class InputDialogFragment : BottomSheetDialogFragment() {
 
     private var _binding: FragmentInputDialogBinding? = null
     private val binding get() = _binding!!
-    private val loadingOverlay by lazy { LoadingOverlay(this) }
     var onConfirm: ((String) -> Unit)? = null
 
     private val maxLength: Int
         get() = arguments?.getInt(ARG_MAX_LENGTH, DEFAULT_MAX_LENGTH) ?: DEFAULT_MAX_LENGTH
 
     private var isError = false
+
+    //다이얼로그 표시 (setFragmentManager 호출 후 사용)
+    fun show() {
+        fragmentManager?.let { show(it, TAG) }
+            ?: throw IllegalStateException("FragmentManager가 설정되지 않았습니다. setFragmentManager()를 먼저 호출하세요.")
+    }
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -93,6 +107,7 @@ class InputDialogFragment : BottomSheetDialogFragment() {
         setupTextWatcher()
     }
 
+
     private fun setupFullScreen() {
         (dialog as? BottomSheetDialog)?.let { bottomSheetDialog ->
             bottomSheetDialog.setOnShowListener {
@@ -117,13 +132,16 @@ class InputDialogFragment : BottomSheetDialogFragment() {
         val initialText = arguments?.getString(ARG_INITIAL_TEXT) ?: ""
         val hint = arguments?.getString(ARG_HINT)
         val buttonText = arguments?.getString(ARG_BUTTON_TEXT) ?: getString(R.string.dialog_confirm)
+        val completeText =
+            arguments?.getString(ARG_COMPLETE_TEXT) ?: getString(R.string.dialog_default_complete)
 
         binding.titleTxt.text = title
         binding.descriptionTxt.text = description
         binding.confirmBtn.text = buttonText
+        binding.completeView.text = completeText
 
         hint?.let { binding.inputTxt.hint = it }
-        binding.inputTxt.filters = arrayOf(InputFilter.LengthFilter(maxLength))
+        binding.inputTxt.filters = arrayOf(MaxLengthInputFilter(maxLength) { showMaxLengthError() })
         binding.inputTxt.setText(initialText)
 
         // 입력 필드에 포커스 및 커서를 끝으로 이동
@@ -131,6 +149,7 @@ class InputDialogFragment : BottomSheetDialogFragment() {
         binding.inputTxt.setSelection(binding.inputTxt.text?.length ?: 0)
 
         // 초기 상태 설정
+        showDefault()
         updateButtonState(initialText)
         updateClearButtonVisibility(initialText)
         updateCounter(initialText.length)
@@ -144,13 +163,13 @@ class InputDialogFragment : BottomSheetDialogFragment() {
         }
 
         binding.confirmBtn.setOnClickListener {
-            val imm = view?.context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm =
+                view?.context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view?.windowToken, 0)
 
             val inputText = binding.inputTxt.text?.toString()?.trim() ?: ""
             if (inputText.isNotEmpty() && inputText.length <= maxLength) {
                 onConfirm?.invoke(inputText)
-                loadingOverlay.show()
             }
         }
 
@@ -170,11 +189,44 @@ class InputDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
+    fun showDefault() {
+        binding.confirmBtn.visibility = View.VISIBLE
+        binding.loadingView.visibility = View.GONE
+        binding.completeView.visibility = View.GONE
+        binding.blockingView.visibility = View.GONE
+    }
+
+    /** 로딩 상태로 변경 */
+    fun showLoading() {
+        binding.confirmBtn.visibility = View.GONE
+        binding.loadingView.visibility = View.VISIBLE
+        binding.completeView.visibility = View.GONE
+        binding.blockingView.visibility = View.VISIBLE
+    }
+
+    /** 완료 상태로 변경 */
+    fun showComplete() {
+        binding.confirmBtn.visibility = View.GONE
+        binding.loadingView.visibility = View.GONE
+        binding.completeView.visibility = View.VISIBLE
+        binding.blockingView.visibility = View.VISIBLE
+    }
+
     private fun setupTextWatcher() {
         binding.inputTxt.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            private var previousLength = 0
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                previousLength = s?.length ?: 0
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val currentLength = s?.length ?: 0
+                // 텍스트 삭제 시 에러 해제
+                if (currentLength < previousLength) {
+                    clearError()
+                }
+            }
 
             override fun afterTextChanged(s: Editable?) {
                 val text = s?.toString() ?: ""
@@ -183,6 +235,14 @@ class InputDialogFragment : BottomSheetDialogFragment() {
                 updateCounter(text.length)
             }
         })
+    }
+
+    private fun showMaxLengthError() {
+        isError = true
+        binding.counterTxt.isVisible = true
+        binding.counterTxt.text = getString(R.string.input_dialog_error_max_length, maxLength)
+        binding.counterTxt.setTextColor(requireContext().getColor(R.color.accent_red_normal))
+        updateInputBackground(binding.inputTxt.hasFocus())
     }
 
     private fun updateButtonState(text: String) {
@@ -196,13 +256,8 @@ class InputDialogFragment : BottomSheetDialogFragment() {
     private fun updateCounter(length: Int) {
         if (length > 0) {
             binding.counterTxt.isVisible = true
-            if (length >= maxLength) {
-                isError = true
-                binding.counterTxt.text =
-                    getString(R.string.input_dialog_error_max_length, maxLength)
-                binding.counterTxt.setTextColor(requireContext().getColor(R.color.accent_red_normal))
-            } else {
-                isError = false
+            // 에러 상태가 아닐 때만 카운터 표시 (에러 상태면 에러 메시지 유지)
+            if (!isError) {
                 binding.counterTxt.text =
                     getString(R.string.input_dialog_counter, length, maxLength)
                 binding.counterTxt.setTextColor(requireContext().getColor(R.color.secondary_normal))
@@ -213,6 +268,10 @@ class InputDialogFragment : BottomSheetDialogFragment() {
             binding.counterTxt.isVisible = false
             updateInputBackground(binding.inputTxt.hasFocus())
         }
+    }
+
+    private fun clearError() {
+        isError = false
     }
 
     private fun updateInputBackground(hasFocus: Boolean) {
@@ -256,14 +315,17 @@ class InputDialogFragment : BottomSheetDialogFragment() {
         private const val ARG_INITIAL_TEXT = "arg_initial_text"
         private const val ARG_HINT = "arg_hint"
         private const val ARG_BUTTON_TEXT = "arg_button_text"
+
+        private const val ARG_COMPLETE_TEXT = "arg_complete_text"
         private const val ARG_MAX_LENGTH = "arg_max_length"
 
         fun newInstance(
             title: String,
-            description: String,
+            description: String = "",
             hint: String? = null,
             initialText: String = "",
             buttonText: String? = null,
+            completeText: String? = null,
             maxLength: Int = DEFAULT_MAX_LENGTH
         ): InputDialogFragment {
             return InputDialogFragment().apply {
@@ -273,6 +335,7 @@ class InputDialogFragment : BottomSheetDialogFragment() {
                     ARG_INITIAL_TEXT to initialText,
                     ARG_HINT to hint,
                     ARG_BUTTON_TEXT to buttonText,
+                    ARG_COMPLETE_TEXT to completeText,
                     ARG_MAX_LENGTH to maxLength
                 )
             }

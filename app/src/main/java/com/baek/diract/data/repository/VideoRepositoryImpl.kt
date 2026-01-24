@@ -37,13 +37,23 @@ class VideoRepositoryImpl @Inject constructor(
         tracksId: String,
         sectionId: String,
         videoUri: Uri,
+        thumbnailUri: Uri,
         title: String,
         duration: Double,
         uploaderId: String,
         onProgress: ((Int) -> Unit)?
     ): DataResult<Unit> {
         return try {
-            remoteDataSource.addVideo(tracksId, sectionId, videoUri, title, duration, uploaderId, onProgress)
+            remoteDataSource.addVideo(
+                tracksId,
+                sectionId,
+                videoUri,
+                thumbnailUri,
+                title,
+                duration,
+                uploaderId,
+                onProgress
+            )
             DataResult.Success(Unit)
         } catch (e: Exception) {
             DataResult.Error(e)
