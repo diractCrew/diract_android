@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/manageTeamspaceFragment">
 
     <fragment
         android:id="@+id/homeFragment"
@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_homeFragment_to_projectListFragment"
             app:destination="@id/projectListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_manageTeamspaceFragment"
+            app:destination="@id/manageTeamspaceFragment" />
         <!--
             TODO: 추후 네비게이션 home에서 연결할 때 주석 제거
         <action
@@ -20,6 +23,11 @@
             app:destination="@id/videoListFragment" />
         -->
     </fragment>
+    <fragment
+        android:id="@+id/manageTeamspaceFragment"
+        android:name="com.baek.diract.presentation.home.ManageTeamspaceFragment"
+        android:label="ManageTeamspaceFragment"
+        tools:layout="@layout/fragment_manage_teamspace" />
     <fragment
         android:id="@+id/inboxFragment"
         android:name="com.baek.diract.presentation.inbox.InboxFragment"

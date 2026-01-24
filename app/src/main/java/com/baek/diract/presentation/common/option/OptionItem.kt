@@ -23,7 +23,8 @@ data class OptionItem(
         const val ID_DELETE = "delete"
         const val ID_REPORT = "report"
         const val ID_EDIT_FEEDBACK = "edit_feedback"
-
+        const val ID_RENAME_TEAMSPACE="rename_teamspace"
+        const val ID_KICK_MEMBER="kick_member"
         //이름 수정
         fun editName() = OptionItem(
             id = ID_EDIT_NAME,
@@ -55,5 +56,20 @@ data class OptionItem(
             id = ID_DELETE,
             titleRes = R.string.edit_feedback_option
         )
+
+
+        //팀 스페이스 이름 수정
+        fun renameTeamspace() = OptionItem(
+            id = ID_RENAME_TEAMSPACE,
+            titleRes = R.string.teamspace_rename_title,
+        )
+
+        //팀원 내보내기
+        fun kickMember() = OptionItem(
+            id = ID_KICK_MEMBER,
+            titleRes = R.string.teamspace_action_kick,
+            textColorRes= R.color.accent_red_normal
+        )
+
     }
 }

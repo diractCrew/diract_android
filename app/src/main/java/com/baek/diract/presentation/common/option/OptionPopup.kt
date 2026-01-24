@@ -196,5 +196,11 @@ class OptionPopup private constructor(
                 .addOption(OptionItem.report())
                 .setOnOptionSelectedListener(onOptionSelected)
         }
+        fun teamspaceOptions(context: Context, onOptionSelected: (OptionItem) -> Unit): Builder {
+            return builder(context)
+                .addOption(OptionItem.renameTeamspace())
+                .addOption(OptionItem.kickMember())
+                .setOnOptionSelectedListener(onOptionSelected)
+        }
     }
 }

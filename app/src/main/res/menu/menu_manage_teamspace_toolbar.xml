@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/action_rename"
-        android:title="@string/teamspace_rename_title" />
-    <item
-        android:id="@+id/action_delete"
-        android:title="@string/teamspace_action_kick" />
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item
+        android:id="@+id/action_more"
+        android:icon="@drawable/ic_more_vert"
+        android:title="@string/more"
+
+        app:showAsAction="always" />
 </menu>

@@ -1,6 +1,8 @@
 package com.baek.diract.presentation.home
 
 import android.os.Bundle
+import com.baek.diract.presentation.common.option.OptionPopup
+import com.baek.diract.presentation.common.option.OptionItem
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
@@ -8,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.navigation.fragment.findNavController
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -88,7 +91,9 @@ class HomeFragment : Fragment() {
             }
         )
 
-
+        binding.manageTeamspace.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_manageTeamspaceFragment)
+        }
 
         // TODO: viewModel 프로젝트 리스트 수집해서 submitList
         // viewModel.projects.collect { projectAdapter.submitList(it) }
@@ -174,26 +179,17 @@ class HomeFragment : Fragment() {
         }.show(parentFragmentManager, InputDialogFragment.TAG)
     }
     private fun showProjectActions(anchor: View, project: ProjectSummary) {
-        PopupMenu(requireContext(), anchor).apply {
-            menuInflater.inflate(R.menu.menu_project_actions, menu)
-            menu.findItem(R.id.action_delete)?.let { item ->
-                val s = SpannableString(item.title)
-                s.setSpan(
-                    ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.accent_red_normal)),
-                    0, s.length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-                item.title = s
-            }
-
-            setOnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    R.id.action_rename -> { showRenameDialog(project); true }
-                    R.id.action_delete -> { showDeleteDialog(project); true }
-                    else -> false
+        OptionPopup
+            .basicOptions(
+                context = requireContext(),
+                onOptionSelected = { option ->
+                    when (option.id) {
+                        OptionItem.ID_EDIT_NAME -> showRenameDialog(project)
+                        OptionItem.ID_DELETE -> showDeleteDialog(project)
+                    }
                 }
-            }
-        }.show()
+            )
+            .show(anchor)
     }
 
 
