@@ -95,8 +95,8 @@ class VideoListViewModel @Inject constructor(
                     _sections.value = sections
 
                     val defaultSectionId = _selectedSectionId.value
+                        ?.takeIf { id -> sections.any { it.id == id } }
                         ?: sections.firstOrNull()?.id
-
                     _selectedSectionId.value = defaultSectionId
 
                     // 2. 선택된 섹션의 비디오 로드
@@ -432,6 +432,7 @@ class VideoListViewModel @Inject constructor(
                     _editUiState.value = UiState.Success(System.currentTimeMillis())
                     refresh()
                 }
+
                 is DataResult.Error -> {
                     _editUiState.value = UiState.Error(
                         message = result.throwable.message,
