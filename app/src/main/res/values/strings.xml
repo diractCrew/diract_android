@@ -54,13 +54,27 @@
     <string name="teamspace_action_delete">팀 스페이스 삭제하기</string>
     <string name="teamspace_action_give_owner">팀장 권한 주기</string>
     <string name="teamspace_action_kick">팀원 내보내기</string>
+
     <string name="teamspace_rename_title">팀 스페이스 이름 수정</string>
     <string name="teamspace_rename_failed">팀 스페이스 이름 수정을 실패했습니다.</string>
     <string name="teamspace_give_owner_failed">팀장 권한 주기를 실패했습니다.</string>
     <string name="teamspace_load_failed">불러오기를 실패했습니다.</string>
     <string name="teamspace_invite">팀에 멤버 초대하기</string>
     <string name="more">더보기</string>
+    <string name="done">완료</string>
     <string name="create_new_teamspace">새 팀 스페이스 만들기</string>
+    <string name="team_member_more">멤버 더보기</string>
+    <string name="close_team_member_more">멤버 더보기 닫기</string>
+    <string name="kick_from_team">팀에서 내보내기</string>
+    <string name="network_error_teamspace">불러오기를 실패했습니다</string>
+
+    <!-- 음앗 리스트 화면 -->
+    <string name="project_add_song">곡 추가하기</string>
+    <string name="project_empty_add_song_message">곡이 없습니다. 추가해보세요</string>
+    <string name="project_action_playlist_name">플레이리스트 이름</string>
+    <string name="error_load_songs">곡을 불러올 수 없습니다.</string>
+    <string name="song_load_failed">곡</string>
+
 
 
     <!-- 영상 리스트 화면 -->
@@ -101,7 +115,7 @@
     <string name="dialog_cancel">취소</string>
     <string name="dialog_delete">삭제</string>
     <string name="dialog_exit">나가기</string>
-    <string name="dialog_discard_title">변경사항이 저장되지 않았습니다. 나가시겠어요?</string>
+    <string name="dialog_discard_title">변경사항이 저장되지 않았습니다. 종료하시겠어요?</string>
     <string name="dialog_discard_message">저장하지 않은 변경사항은 사라집니다.</string>
     <string name="dialog_discard">취소하기</string>
     <string name="dialog_delete_part_title">>%1$s을/를 삭제하시겠어요?</string>
