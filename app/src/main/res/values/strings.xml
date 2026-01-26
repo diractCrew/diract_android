@@ -37,6 +37,7 @@
     <string name="move_video_select_section">파트 선택</string>
     <string name="move_video_confirm_btn_txt">비디오 이동하기</string>
 
+
     <!-- 옵션 팝업 -->
     <string name="edit_name_option">이름 수정</string>
     <string name="delete_option">삭제</string>
@@ -68,8 +69,10 @@
     <string name="toast_delete_video">동영상이 삭제되었습니다.</string>
     <string name="toast_upload_video">동영상이 업로드 되었습니다.</string>
     <string name="toast_failed_delete_video">동영상 삭제를 실패했습니다.</string>
-    <string name="toast_failed_move_video">동영상 이동을 실패했습니다.</string>
     <string name="toast_failed_edit_video_title">이름 수정을 실패했습니다.</string>
+    <string name="toast_move_video">동영상이 이동되었습니다.</string>
+    <string name="toast_failed_move_video">동영상을 옮기는 중에 문제가 발생했습니다.</string>
+
     <!-- 비디오 업로드 -->
     <string name="filter_all">전체</string>
     <string name="filter_favorite">즐겨찾기</string>
@@ -83,7 +86,6 @@
     <string name="title_counter_format">%1$d/%2$d</string>
 
     <!-- 비디오 이름 수정 다이얼로그 -->
-
     <string name="dialog_video_name_title">비디오 이름 수정</string>
     <string name="dialog_video_name_hint">비디오 제목</string>
     <string name="back">back</string>
