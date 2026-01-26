@@ -124,6 +124,7 @@
             android:gravity="center"
             android:paddingTop="10dp"
             android:paddingBottom="0dp"
+            android:visibility="visible"
             android:text="@string/teamspace_action_delete"
             android:textColor="@color/accent_red_strong"
             android:textAppearance="@style/Headline2.Medium" />
@@ -155,7 +156,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -181,5 +182,46 @@
             android:textAppearance="@style/Headline2.Medium"
             android:textColor="@color/label_assistive"
             android:textSize="16sp" />
+    </LinearLayout>
+
+    <!-- 네트워크 오류시 표시  -->
+    <LinearLayout
+        android:id="@+id/networkErrorTeamspace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.564">
+
+
+        <ImageView
+            android:id="@+id/ivNetworkErrorTeamspace"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:clickable="true"
+            android:contentDescription="@string/create_teamspace"
+            android:focusable="true"
+            android:src="@drawable/ic_warning" />
+
+        <TextView
+            android:id="@+id/tvNetworkErrorTeamspace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/network_error_teamspace"
+            android:textAppearance="@style/Body1.Medium"
+            android:textColor="@color/label_normal"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/btnReplayTeamspace"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_replay_20dp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
