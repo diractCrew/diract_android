@@ -29,6 +29,7 @@ import com.baek.diract.presentation.common.dialog.BasicDialog
 import com.baek.diract.presentation.common.dialog.InputDialogFragment
 import com.baek.diract.presentation.common.option.OptionItem
 import com.baek.diract.presentation.common.option.OptionPopup
+import com.baek.diract.presentation.home.video.move_video.MoveVideoFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -99,6 +100,24 @@ class VideoListFragment : Fragment() {
             }
         }
         editNameDialog?.show(parentFragmentManager, InputDialogFragment.TAG)
+    }
+
+    private fun showMoveVideoDialog(video: VideoSummary) {
+        MoveVideoFragment.newInstance(
+            tracksId = viewModel.tracksId,
+            trackId = video.trackId,
+            sectionId = video.sectionId
+        ).show(childFragmentManager, MoveVideoFragment.TAG)
+
+        childFragmentManager.setFragmentResultListener(
+            MoveVideoFragment.REQUEST_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val movedSectionId = bundle.getString(MoveVideoFragment.MOVED_SECTION_ID)
+            if (movedSectionId != null) {
+                viewModel.selectSection(movedSectionId)
+            }
+        }
     }
 
     private fun startVideoUploadFlow() {
@@ -299,8 +318,7 @@ class VideoListFragment : Fragment() {
             }
 
             OptionItem.ID_MOVE -> {
-                // TODO: 다른 파트로 이동
-                Toast.makeText(requireContext(), "파트 이동: ${video.title}", Toast.LENGTH_SHORT).show()
+                showMoveVideoDialog(video)
             }
 
             OptionItem.ID_DELETE -> {
