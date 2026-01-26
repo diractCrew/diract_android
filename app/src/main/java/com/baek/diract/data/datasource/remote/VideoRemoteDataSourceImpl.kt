@@ -67,7 +67,7 @@ class VideoRemoteDataSourceImpl @Inject constructor(
                 )
             }
         }
-        return videos.sortedBy { it.video.created_at }
+        return videos.sortedByDescending { it.video.created_at }
     }
 
     override suspend fun addVideo(
@@ -172,7 +172,6 @@ class VideoRemoteDataSourceImpl @Inject constructor(
 
         // 기존 track 문서 데이터 가져오기
         val trackDoc = fromTrackRef.get().await()
-        val videoId = trackDoc.getString("video_id") ?: return
 
         // 새 섹션에 track 추가
         val toTrackRef = firestore
@@ -183,7 +182,14 @@ class VideoRemoteDataSourceImpl @Inject constructor(
             .collection("track")
             .document()
 
-        toTrackRef.set(hashMapOf("video_id" to videoId)).await()
+        val newTrackData = hashMapOf(
+            "video_id" to trackDoc.getString("video_id"),
+            "track_id" to toTrackRef.id,
+            "created_at" to trackDoc.getTimestamp("created_at"),
+            "updated_at" to Timestamp.now(),
+            "section_id" to toSectionId
+        )
+        toTrackRef.set(newTrackData).await()
 
         // 기존 track 삭제
         fromTrackRef.delete().await()
