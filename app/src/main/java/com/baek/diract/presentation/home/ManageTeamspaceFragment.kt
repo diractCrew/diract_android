@@ -1,5 +1,7 @@
 package com.baek.diract.presentation.home
 
+import android.R.attr.visibility
+import android.R.id.message
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -12,6 +14,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.baek.diract.R
 import com.baek.diract.databinding.FragmentManageTeamspaceBinding
+import com.baek.diract.presentation.common.dialog.BasicDialog
 
 import com.baek.diract.presentation.common.dialog.InputDialogFragment
 import com.baek.diract.presentation.common.option.OptionItem
@@ -31,16 +34,67 @@ class ManageTeamspaceFragment : Fragment(R.layout.fragment_manage_teamspace) {
         TeamspaceUi(2, "Developer Academy"),
         TeamspaceUi(3, "CTR D"),
     )
+    private var isLeaderUser: Boolean = true // TODO: 실제 서버/도메인값으로 세팅
     private var _binding: FragmentManageTeamspaceBinding? = null
     private val viewModel: HomeViewModel by activityViewModels()
     private val binding get() = _binding!!
     private var switcherPopup: TeamspaceSwitcherPopup? = null
+    private var isKickMode: Boolean = false
+    private fun updateKickActionEnabled(enabled: Boolean) {
+        binding.actionKickMembers.isEnabled = enabled
+        val colorRes = if (enabled) R.color.accent_red_normal else R.color.fill_assistive
+        binding.actionKickMembers.setTextColor(ContextCompat.getColor(requireContext(), colorRes))
+    }
+    private fun applyRoleUi(isLeader: Boolean) {
+        isLeaderUser = isLeader
+
+
+        // ✅ "팀 스페이스 삭제하기" 제거
+        binding.toolbar.menu.findItem(R.id.action_more)?.isVisible = isLeader
+        binding.toolbar.menu.findItem(R.id.action_more)?.isEnabled = isLeader
+
+        binding.tvDeleteTeamspace.isVisible = isLeader
+    }
+    private fun exitKickMode() {
+        isKickMode = false
+        binding.cancelBtn.isVisible = false
+        binding.actionKickMembers.isVisible = false
+
+        binding.dividerDangerActions.visibility = View.VISIBLE
+        binding.tvLeaveTeamspace.visibility = View.VISIBLE
+
+        // ✅ 리더만 삭제 보이게
+        binding.tvDeleteTeamspace.isVisible = isLeaderUser
+
+        updateKickActionEnabled(false)
+        memberAdapter.setKickMode(false)
+    }
     private val memberAdapter by lazy {
-        TeamMemberAdapter { anchor, member ->
-            MemberActionBottomSheet
-                .newInstance(member.id, member.name)
-                .show(parentFragmentManager, "member_actions")
-        }
+        TeamMemberAdapter(
+            onMoreClick = { _, member ->
+                if (!isLeaderUser) return@TeamMemberAdapter
+                MemberActionBottomSheet
+                    .newInstance(member.id, member.name) { id, name ->
+                        showKickMemberDialog(name) {
+                            // TODO: viewModel.kickMember(teamspaceId, id)
+                        }
+                    }
+                    .show(parentFragmentManager, "member_actions")
+            },
+            onSelectionChanged = { selectedIds ->
+                updateKickActionEnabled(selectedIds.isNotEmpty())
+            }
+        )
+    }
+    private fun enterKickMode() {
+        isKickMode = true
+        binding.cancelBtn.isVisible = true
+        binding.actionKickMembers.isVisible = true
+        binding.dividerDangerActions.visibility = View.GONE
+        binding.tvLeaveTeamspace.visibility = View.GONE
+        binding.tvDeleteTeamspace.visibility = View.GONE
+        updateKickActionEnabled(false)
+        memberAdapter.setKickMode(true)
     }
     private fun showCreateTeamspaceSheet() {
         InputDialogFragment.newInstance(
@@ -86,7 +140,37 @@ class ManageTeamspaceFragment : Fragment(R.layout.fragment_manage_teamspace) {
         dialog.show(parentFragmentManager, InputDialogFragment.TAG)
     }
     private var dividerAdded = false
+    private fun showKickMemberDialog(memberName: String, onConfirm: () -> Unit) {
+        BasicDialog.destructive(
+            context = requireContext(),
+            title = getString(R.string.dialog_teamspace_kick_title, memberName),
+            message = getString(R.string.dialog_teamspace_kick_message),
+            negativeText = getString(R.string.cancel),
+            positiveText = getString(R.string.dialog_teamspace_kick_action), // "내보내기" 리소스
+            onNegative = {},
+            onPositive = onConfirm
+        ).show()
+    }
 
+    private fun showDeleteTeamspaceDialog(teamName: String, onConfirm: () -> Unit) {
+        BasicDialog.destructive(
+            context = requireContext(),
+            title = getString(R.string.dialog_teamspace_delete_title, teamName),
+            message = getString(R.string.dialog_teamspace_delete_message),
+            negativeText = getString(R.string.cancel),
+            positiveText = getString(R.string.dialog_delete), // "삭제" 리소스(이미 있던걸로)
+            onNegative = {},
+            onPositive = onConfirm
+        ).show()
+    }
+
+    private fun showLeaderCannotLeaveDialog() {
+        BasicDialog.confirm(
+            context = requireContext(),
+            title = getString(R.string.dialog_teamspace_leader_cannot_leave_title),
+            message = getString(R.string.dialog_teamspace_leader_cannot_leave_message)
+        ).show()
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentManageTeamspaceBinding.bind(view)
@@ -125,8 +209,7 @@ class ManageTeamspaceFragment : Fragment(R.layout.fragment_manage_teamspace) {
                                 OptionItem.ID_RENAME_TEAMSPACE -> {
                                     showRenameTeamspaceDialog()
                                 }
-                                OptionItem.ID_KICK_MEMBER -> {
-                                    // 선택모드 진입
+                                OptionItem.ID_KICK_MEMBER -> {    enterKickMode()
                                 }
                             }
                         }
@@ -164,7 +247,53 @@ class ManageTeamspaceFragment : Fragment(R.layout.fragment_manage_teamspace) {
             TeamMemberUi("9", "멤버9", isLeader = false),
             TeamMemberUi("10", "멤버10", isLeader = false),
         )
+        val myMemberId = "2" // TODO: 실제 내 id
+        val isLeader = fake.firstOrNull { it.id == myMemberId }?.isLeader == true
+        applyRoleUi(isLeader)
+        memberAdapter.setLeaderUser(isLeader)
+        binding.tvLeaveTeamspace.setOnClickListener {
 
+            // ✅ 팀장인 경우: '나갈 수 없음'만 띄우고 끝
+            if (isLeaderUser) {
+                showLeaderCannotLeaveDialog()
+                return@setOnClickListener
+            }
+
+            val teamName = binding.tvTeamspaceTitle.text?.toString().orEmpty()
+
+            val title = if (teamName.isNotBlank()) {
+                "$teamName ${getString(R.string.dialog_teamspace_leave_teamspace_title)}"
+            } else {
+                getString(R.string.dialog_teamspace_leave_teamspace_title)
+            }
+
+            BasicDialog.destructive(
+                context = requireContext(),
+                title = title,
+                message = getString(R.string.dialog_teamspace_leave_teamspace_message),
+                negativeText = getString(R.string.dialog_cancel),
+                positiveText = getString(R.string.dialog_teamspace_leave_teamspace),
+                onNegative = {},
+                onPositive = {
+                    // TODO: viewModel.leaveTeamspace(selectedTeamspaceId)
+                    findNavController().navigateUp()
+                }
+            ).show()
+        }
+        binding.tvDeleteTeamspace.setOnClickListener {
+
+            // 리더만 삭제 가능 (팀원이면 원래 뷰도 숨김 처리 중이지만 안전하게 한 번 더)
+            if (!isLeaderUser) return@setOnClickListener
+
+            val teamName = binding.tvTeamspaceTitle.text?.toString().orEmpty()
+
+            showDeleteTeamspaceDialog(teamName) {
+                // TODO: 실제 삭제 API
+                // viewModel.deleteTeamspace(selectedTeamspaceId)
+
+                findNavController().navigateUp()
+            }
+        }
 // 팀장 맨 위 고정해서 넣기
         memberAdapter.submitList(fake.sortedByDescending { it.isLeader })
         binding.teamspaceTitleArea.setOnClickListener {
@@ -179,7 +308,28 @@ class ManageTeamspaceFragment : Fragment(R.layout.fragment_manage_teamspace) {
                 onCreate = { showCreateTeamspaceSheet() }
             ).show(binding.teamspaceTitleArea)
         }
+        exitKickMode()
+        binding.cancelBtn.setOnClickListener { exitKickMode() }
 
+        binding.actionKickMembers.setOnClickListener {
+            if (!binding.actionKickMembers.isEnabled) return@setOnClickListener
+
+            val selectedIds = memberAdapter.getSelectedIds()
+
+            BasicDialog.destructive(
+                context = requireContext(),
+                title = getString(R.string.teamspace_kick_members_title),
+                message = getString(R.string.teamspace_kick_members_desc),
+                negativeText = getString(R.string.cancel),
+                positiveText = getString(R.string.teamspace_action_kick_btn),
+                onNegative = { /* 아무 것도 안 해도 됨 */ },
+                onPositive = {
+                    // TODO: 실제 내보내기 처리
+                    // viewModel.kickMembers(selectedIds.toList())
+                    exitKickMode()
+                }
+            ).show()
+        }
     }
 
 

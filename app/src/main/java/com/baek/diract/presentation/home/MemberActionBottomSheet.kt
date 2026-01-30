@@ -16,8 +16,12 @@ class MemberActionBottomSheet : BottomSheetDialogFragment() {
     private var _binding: BottomsheetMemberActionsBinding? = null
     private val binding get() = _binding!!
 
+    // ✅ arguments 키를 상수로 통일해서 읽기
     private val memberId by lazy { requireArguments().getString(ARG_ID).orEmpty() }
     private val memberName by lazy { requireArguments().getString(ARG_NAME).orEmpty() }
+
+    // ✅ Fragment로 전달할 콜백
+    private var onKickClick: ((String, String) -> Unit)? = null
 
     private enum class LeaderState { IDLE, LOADING, SUCCESS }
 
@@ -38,26 +42,23 @@ class MemberActionBottomSheet : BottomSheetDialogFragment() {
         renderLeaderState(LeaderState.IDLE)
 
         btnGiveLeader.setOnClickListener {
-            // 1) 로딩 표시
             renderLeaderState(LeaderState.LOADING)
 
-            // TODO: 실제 API 호출로 교체
-            // 지금은 더미로 성공/실패를 번갈아 테스트 가능
             view.postDelayed({
-                val success = true // 실패 테스트: false
+                val success = true
                 if (success) {
                     renderLeaderState(LeaderState.SUCCESS)
                 } else {
-                    // 실패: 스낵바 띄우고 원상복구
                     Snackbar.make(requireView(), "팀장 권한 주기를 실패했습니다.", Snackbar.LENGTH_SHORT).show()
                     renderLeaderState(LeaderState.IDLE)
                 }
             }, 800)
         }
 
+        // ✅ 여기만 핵심 변경: 이미 계산된 memberId/memberName 그대로 콜백
         tvKick.setOnClickListener {
-            // TODO: 내보내기 처리 (확인 다이얼로그 띄우는 게 보통)
-            // 지금은 동작만 막고 싶으면 주석 처리해도 됨.
+            dismiss()
+            onKickClick?.invoke(memberId, memberName)
         }
     }
 
@@ -68,7 +69,6 @@ class MemberActionBottomSheet : BottomSheetDialogFragment() {
         pbLoading.isVisible = loading
         ivSuccess.isVisible = success
 
-        // 스샷처럼 로딩/성공일 때 다른 액션 비활성
         btnGiveLeader.isEnabled = !loading && !success
         tvKick.isEnabled = !loading && !success
         tvKick.alpha = if (!loading && !success) 1f else 0.35f
@@ -78,13 +78,27 @@ class MemberActionBottomSheet : BottomSheetDialogFragment() {
         _binding = null
         super.onDestroyView()
     }
+
     override fun getTheme(): Int = R.style.ThemeOverlay_Diract_BottomSheetDialog
+
     companion object {
         private const val ARG_ID = "arg_id"
         private const val ARG_NAME = "arg_name"
 
-        fun newInstance(id: String, name: String) = MemberActionBottomSheet().apply {
-            arguments = bundleOf(ARG_ID to id, ARG_NAME to name)
+        fun newInstance(
+            memberId: String,
+            memberName: String,
+            onKickClick: (String, String) -> Unit
+        ): MemberActionBottomSheet {
+            return MemberActionBottomSheet().apply {
+                arguments = bundleOf(
+                    ARG_ID to memberId,
+                    ARG_NAME to memberName
+                )
+                this.onKickClick = onKickClick
+            }
+
         }
+
     }
 }
