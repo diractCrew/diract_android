@@ -12,8 +12,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="16dp"
-        android:visibility="invisible">
-
+        android:visibility="gone">
+        <View
+            android:id="@+id/teamspaceTipScrim"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
         <!-- 상단: 타이틀 -->
         <LinearLayout
             android:id="@+id/CreateTeamspaceBar"
@@ -50,9 +60,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="13dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
             android:background="@color/background_normal"
             android:elevation="4dp"
-            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/CreateTeamspaceBar">
 
@@ -99,11 +111,11 @@
 
             <ImageView
                 android:id="@+id/ivEmpty"
-                android:clickable="true"
-                android:focusable="true"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
+                android:clickable="true"
                 android:contentDescription="@string/create_teamspace"
+                android:focusable="true"
                 android:src="@drawable/ic_group" />
 
 
@@ -128,47 +140,102 @@
         android:padding="16dp"
         android:visibility="visible">
 
+        <View
+            android:id="@+id/tipScrim"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
         <!-- 상단: 타이틀 -->
-        <LinearLayout
-            android:id="@+id/homeCreateProjectBar"
+        <FrameLayout
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/tvCreateProjectTitle"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/homeEditProjectBar"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="8dp"
-                android:text="@string/home_teamspace_current_name"
-                android:textAppearance="@style/Heading1.Semibold"
-                android:textColor="@color/label_strong"
-                android:textSize="18sp" />
+                android:paddingBottom="12dp"
+                android:orientation="horizontal"
+                android:visibility="invisible">
 
-            <ImageView
-                android:id="@+id/manageTeamspace"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="end"
-                android:clickable="true"
-                android:focusable="true"
-                android:contentDescription="@string/teamspace_manage"
-                android:src="@drawable/ic_set_teamspace" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tvEditProjectTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:text="@string/project_list_title"
+                    android:textAppearance="@style/Heading1.Semibold"
+                    android:textColor="@color/label_strong"
+                    android:textSize="24sp" />
+
+                <ImageView
+                    android:id="@+id/confirmBtn"
+                    android:layout_width="52dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="end"
+                    android:clickable="true"
+                    android:contentDescription="@string/confirm"
+                    android:focusable="true"
+                    android:src="@drawable/ic_segment_2" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/homeCreateProjectBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/tvCreateProjectTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:text="@string/home_teamspace_current_name"
+                    android:textAppearance="@style/Heading1.Semibold"
+                    android:textColor="@color/label_strong"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:id="@+id/manageTeamspace"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="end"
+                    android:clickable="true"
+                    android:contentDescription="@string/teamspace_manage"
+                    android:focusable="true"
+                    android:src="@drawable/ic_set_teamspace" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- 상단: 타이틀 편집모드 -->
 
         <!-- 프로젝트가 한개 이상있을시 생기는 바 -->
         <LinearLayout
             android:id="@+id/homeProjectToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:visibility="visible"
-            app:layout_constraintTop_toBottomOf="@+id/homeCreateProjectBar"
+            android:paddingTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
             tools:layout_editor_absoluteX="16dp">
 
             <TextView
@@ -188,12 +255,23 @@
                 android:drawableStart="@drawable/ic_add_2"
                 android:drawablePadding="6dp"
                 android:focusable="true"
-                android:paddingVertical="8dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
+                android:padding="8dp"
                 android:text="@string/project_add"
                 android:textAppearance="@style/Body1.Medium"
-                android:textColor="@color/secondary_normal" />
+                android:textColor="@color/secondary_normal"
+                android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/ivProjectEditDone"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:clickable="true"
+                android:contentDescription="@string/done"
+                android:focusable="true"
+                android:padding="10dp"
+                android:src="@drawable/ic_check_circle_filled"
+                android:visibility="gone" />
+
         </LinearLayout>
 
         <!-- 프로젝트 recyclerview -->
@@ -216,9 +294,9 @@
             android:layout_marginTop="8dp"
             android:background="@color/background_normal"
             android:elevation="4dp"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/homeCreateProjectBar">
+            app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
             <LinearLayout
                 android:layout_width="312dp"
@@ -250,13 +328,15 @@
         </com.google.android.material.card.MaterialCardView>
 
         <!-- 중앙 아이콘 (프로젝트)-->
+
+        <!-- 툴팁카드 (프로젝트) -->
         <LinearLayout
             android:id="@+id/emptyProject"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:visibility="invisible"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -284,7 +364,6 @@
 
         </LinearLayout>
 
-        <!-- 툴팁카드 (프로젝트) -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardProjectTip"
             android:layout_width="wrap_content"
@@ -292,7 +371,7 @@
             android:layout_marginTop="8dp"
             android:background="@color/background_normal"
             android:elevation="4dp"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/emptyProject">
