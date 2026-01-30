@@ -54,7 +54,7 @@
     <string name="teamspace_action_delete">팀 스페이스 삭제하기</string>
     <string name="teamspace_action_give_owner">팀장 권한 주기</string>
     <string name="teamspace_action_kick">팀원 내보내기</string>
-
+    <string name="teamspace_action_kick_btn">내보내기</string>
     <string name="teamspace_rename_title">팀 스페이스 이름 수정</string>
     <string name="teamspace_rename_failed">팀 스페이스 이름 수정을 실패했습니다.</string>
     <string name="teamspace_give_owner_failed">팀장 권한 주기를 실패했습니다.</string>
@@ -67,6 +67,19 @@
     <string name="close_team_member_more">멤버 더보기 닫기</string>
     <string name="kick_from_team">팀에서 내보내기</string>
     <string name="network_error_teamspace">불러오기를 실패했습니다</string>
+    <string name="teamspace_kick_members_title">선택한 팀원들을 내보내시겠어요?</string>
+    <string name="teamspace_kick_members_desc">이후 다시 초대할 수 있습니다.</string>
+    <string name="dialog_teamspace_leave_teamspace_title"> 팀 스페이스를 나가시겠어요?</string>
+    <string name="dialog_teamspace_leave_teamspace_message">다시 초대받아 참여할 수 있습니다.</string>
+    <string name="dialog_teamspace_leave_teamspace">나가기</string>
+    <string name="dialog_teamspace_kick_title">%1$s 팀원을 내보내시겠어요?</string>
+    <string name="dialog_teamspace_kick_message">이후 다시 초대할 수 있습니다.</string>
+    <string name="dialog_teamspace_kick_action">내보내기</string>
+    <string name="dialog_teamspace_delete_title">팀 스페이스를 삭제하시겠어요?</string>
+    <string name="dialog_teamspace_delete_message">팀 스페이스와 멤버 목록이 모두 초기화되며 되돌릴 수 없습니다.</string>
+    <string name="dialog_teamspace_leader_cannot_leave_title">팀 스페이스를 나갈 수 없습니다.</string>
+    <string name="dialog_teamspace_leader_cannot_leave_message">팀 스페이스에서 나가려면 팀장 권한을 다른 팀원에게 양도해야합니다.</string>
+
 
     <!-- 음앗 리스트 화면 -->
     <string name="project_add_song">곡 추가하기</string>
@@ -74,6 +87,16 @@
     <string name="project_action_playlist_name">플레이리스트 이름</string>
     <string name="error_load_songs">곡을 불러올 수 없습니다.</string>
     <string name="song_load_failed">곡</string>
+    <string name="song_list_name_header">곡 리스트 이름</string>
+    <string name="song_list_name_max_warning">곡 이름은 20자 이하로 입력해주세요.</string>
+    <string name="song_">곡 이름은 20자 이하로 입력해주세요.</string>
+    <string name="dialog_song_cannot_recover">곡 안의 모든 내용이 사라집니다.</string>
+    <string name="dialog_song_delete_title">\%s\ 곡을 삭제하시겠어요?</string>
+    <string name="song_add_prompt">추가할 곡의 이름을 입력하세요</string>
+    <string name="song_add_title">곡 추가하기</string>
+    <string name="song_name_hint">(예시) SEVENTEEN - 만세</string>
+    <string name="song_add_cta">곡 추가하기</string>
+
 
 
 
